@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 import sys
 import os
+import re
 from datetime import datetime
+from urllib.parse import urljoin
 import cloudscraper
 from bs4 import BeautifulSoup
 import pandas as pd
@@ -32,6 +34,64 @@ default_port = 465 if "gmail.com" in EMAIL_REMETENTE.lower() else 587
 SMTP_SERVER = (os.getenv("SMTP_SERVER") or default_server).strip()
 SMTP_PORT = int(os.getenv("SMTP_PORT") or default_port)
 
+BASE_URL = "https://www.comprasparaguai.com.br"
+
+def normalizar_preco(valor):
+    texto = valor.replace("US$", "").replace("R$", "").replace("\xa0", " ").strip()
+    texto = re.sub(r"[^0-9,.]", "", texto)
+    if not texto:
+        return None
+    if "," in texto:
+        texto = texto.replace(".", "").replace(",", ".")
+    try:
+        return float(texto)
+    except ValueError:
+        return None
+
+def extrair_ofertas_produto(scraper, url_produto, modelo, data_coleta):
+    resposta = scraper.get(url_produto, timeout=20)
+    if resposta.status_code != 200:
+        print(f"[!] Detalhes indisponíveis (Status: {resposta.status_code}): {url_produto}")
+        return []
+
+    sopa = BeautifulSoup(resposta.text, "html.parser")
+    ofertas = []
+    for item in sopa.select("#container-ofertas div.promocao-produtos-item"):
+        nome_elem = item.select_one(".promocao-item-nome")
+        nome_produto = nome_elem.get_text(" ", strip=True) if nome_elem else modelo
+        codigo_elem = item.select_one(".promocao-item-caracteristicas")
+        codigo = codigo_elem.get_text(" ", strip=True).replace("Código:", "").strip() if codigo_elem else ""
+
+        preco_usd_elem = item.select_one(".promocao-item-preco-oferta strong")
+        preco_brl_elem = item.select_one(".promocao-item-preco-text")
+        preco_usd = normalizar_preco(preco_usd_elem.get_text(" ", strip=True) if preco_usd_elem else "")
+        preco_brl = normalizar_preco(preco_brl_elem.get_text(" ", strip=True) if preco_brl_elem else "")
+
+        loja_elem = item.select_one("img.store-image")
+        loja = (loja_elem.get("alt") or loja_elem.get("title") or "").strip() if loja_elem else ""
+        if not loja:
+            advertiser = re.search(r"['\"]advertiser['\"]\s*:\s*['\"]([^'\"]+)", str(item))
+            loja = advertiser.group(1).strip() if advertiser else "Loja não identificada"
+
+        link_loja_elem = item.select_one("img.store-image")
+        link_loja = ""
+        if link_loja_elem and link_loja_elem.parent and link_loja_elem.parent.name == "a":
+            link_loja = urljoin(BASE_URL, link_loja_elem.parent.get("href", ""))
+        link_produto_elem = item.select_one(".promocao-item-nome a")
+
+        ofertas.append({
+            "Data": data_coleta,
+            "Modelo": modelo,
+            "Produto": nome_produto,
+            "Loja": loja,
+            "Preco_USD": preco_usd,
+            "Preco_BRL": preco_brl,
+            "Codigo": codigo,
+            "Link_Produto": urljoin(BASE_URL, link_produto_elem.get("href", "")) if link_produto_elem else url_produto,
+            "Link_Loja": link_loja,
+        })
+    return ofertas
+
 def raspar_precos_paraguai(termo_busca="iphone 17 pro max"):
     url_alvo = f"https://www.comprasparaguai.com.br/busca/?q={termo_busca.replace(' ', '+')}"
     print(f"[*] Acessando portal: {url_alvo}")
@@ -60,24 +120,14 @@ def raspar_precos_paraguai(termo_busca="iphone 17 pro max"):
             return []
             
         produtos = []
+        data_coleta = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         for item in itens:
             nome_elem = item.find("div", class_="promocao-item-nome")
             nome = nome_elem.get_text(strip=True) if nome_elem else "Modelo não identificado"
-            
-            preco_elem = item.find("div", class_="price-model")
-            preco_usd_raw = preco_elem.find("span").get_text(strip=True) if (preco_elem and preco_elem.find("span")) else ""
-            preco_brl_raw = item.find("div", class_="promocao-item-preco-text").get_text(strip=True) if item.find("div", class_="promocao-item-preco-text") else ""
-            
-            # Limpeza de caracteres
-            preco_usd = preco_usd_raw.replace("US$", "").replace("U$", "").replace("\xa0", " ").strip()
-            preco_brl = preco_brl_raw.replace("R$", "").replace("\xa0", " ").strip()
-            
-            produtos.append({
-                "Data": datetime.now().strftime("%Y-%m-%d %H:%M"),
-                "Modelo": nome,
-                "Preco_USD": preco_usd,
-                "Preco_BRL": preco_brl
-            })
+            link_elem = nome_elem.find("a") if nome_elem else None
+            link_produto = urljoin(BASE_URL, link_elem.get("href", "")) if link_elem else ""
+            if link_produto:
+                produtos.extend(extrair_ofertas_produto(scraper, link_produto, nome, data_coleta))
             
         return produtos
 
@@ -175,6 +225,12 @@ def obter_caminho_desktop():
         desktop = os.getcwd()
     return desktop
 
+def salvar_historico(df, caminho_csv):
+    colunas = ["Data", "Modelo", "Produto", "Loja", "Preco_USD", "Preco_BRL", "Codigo", "Link_Produto", "Link_Loja"]
+    df = df.reindex(columns=colunas)
+    existe = os.path.exists(caminho_csv) and os.path.getsize(caminho_csv) > 0
+    df.to_csv(caminho_csv, mode="a", header=not existe, index=False, encoding="utf-8-sig")
+
 if __name__ == "__main__":
     termo = "iphone 17 pro max"
     dados = raspar_precos_paraguai(termo)
@@ -185,9 +241,9 @@ if __name__ == "__main__":
         
         # Salva o arquivo CSV no Desktop
         desktop = obter_caminho_desktop()
-        caminho_csv = os.path.join(desktop, "historico_iphone_paraguai.csv")
-        df.to_csv(caminho_csv, index=False, encoding="utf-8-sig")
-        print(f"[+] Planilha atualizada salva em:\n    {caminho_csv}")
+        caminho_csv = os.path.join(desktop, "historico_precos_iphone.csv")
+        salvar_historico(df, caminho_csv)
+        print(f"[+] Histórico atualizado salvo em:\n    {caminho_csv}")
         
         # Dispara o envio por e-mail
         if not enviar_relatorio_email(df, caminho_csv):
