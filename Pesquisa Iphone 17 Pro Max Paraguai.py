@@ -59,6 +59,8 @@ def extrair_ofertas_produto(scraper, url_produto, modelo, data_coleta):
     for item in sopa.select("#container-ofertas div.promocao-produtos-item"):
         nome_elem = item.select_one(".promocao-item-nome")
         nome_produto = nome_elem.get_text(" ", strip=True) if nome_elem else modelo
+        if "iphone 17 pro max" not in nome_produto.lower():
+            continue
         codigo_elem = item.select_one(".promocao-item-caracteristicas")
         codigo = codigo_elem.get_text(" ", strip=True).replace("Código:", "").strip() if codigo_elem else ""
 
