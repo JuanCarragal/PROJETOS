@@ -29,8 +29,8 @@ EMAIL_DESTINO = os.getenv("EMAIL_DESTINO", "carragal@hotmail.com").strip()
 default_server = "smtp.gmail.com" if "gmail.com" in EMAIL_REMETENTE.lower() else "smtp-mail.outlook.com"
 default_port = 465 if "gmail.com" in EMAIL_REMETENTE.lower() else 587
 
-SMTP_SERVER = os.getenv("SMTP_SERVER", default_server).strip()
-SMTP_PORT = int(os.getenv("SMTP_PORT", default_port))
+SMTP_SERVER = (os.getenv("SMTP_SERVER") or default_server).strip()
+SMTP_PORT = int(os.getenv("SMTP_PORT") or default_port)
 
 def raspar_precos_paraguai(termo_busca="iphone 17 pro max"):
     url_alvo = f"https://www.comprasparaguai.com.br/busca/?q={termo_busca.replace(' ', '+')}"
