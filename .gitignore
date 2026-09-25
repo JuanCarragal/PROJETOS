@@ -1,0 +1,49 @@
+# Ambientes Virtuais do Python
+.venv/
+venv/
+ENV/
+env/
+
+# Cache do Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Dependências do Node / Frontend
+node_modules/
+/frontend/node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Builds do Frontend
+/frontend/dist/
+/frontend/build/
+.tsbuildinfo
+
+# Arquivos de dados / temporários / binários grandes
+*.zip
+*.xlsx
+/backend/reports/*.pdf
+/backend/static/uploads/*
+!/backend/static/uploads/.gitkeep
+
+# IDEs e configurações locais
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+.DS_Store
+Thumbs.db
+
+# Configurações e dados locais
+.env
+.env.*
+!.env.example
+logs/
+historico_iphone_paraguai.csv
