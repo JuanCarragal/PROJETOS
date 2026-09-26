@@ -138,7 +138,10 @@ def raspar_precos_paraguai(termo_busca="iphone 17 pro max"):
         return []
 
 def preparar_relatorio_256gb(df):
-    filtro = df["Produto"].fillna("").str.contains(r"\b256\s*GB\b", case=False, regex=True)
+    produtos = df["Produto"].fillna("")
+    filtro_256gb = produtos.str.contains(r"\b256\s*GB\b", case=False, regex=True)
+    filtro_a3526 = produtos.str.contains(r"\bA3526\b", case=False, regex=True)
+    filtro = filtro_256gb & filtro_a3526
     relatorio = df.loc[filtro].copy()
     relatorio["Preco_BRL"] = pd.to_numeric(relatorio["Preco_BRL"], errors="coerce")
     relatorio["Preco_USD"] = pd.to_numeric(relatorio["Preco_USD"], errors="coerce")
@@ -152,7 +155,7 @@ def preparar_relatorio_256gb(df):
 def enviar_relatorio_email(df, caminho_csv=None):
     df = preparar_relatorio_256gb(df)
     if df.empty:
-        print("[!] Nenhuma oferta do iPhone 17 Pro Max 256 GB para incluir no relatório.")
+        print("[!] Nenhuma oferta do iPhone 17 Pro Max A3526 de 256 GB para incluir no relatório.")
         return False
 
     if not EMAIL_SENHA or EMAIL_SENHA == "sua_senha_ou_senha_de_app_aqui":
@@ -200,7 +203,7 @@ def enviar_relatorio_email(df, caminho_csv=None):
     </head>
     <body>
         <div class="card">
-            <h2>📱 iPhone 17 Pro Max 256 GB - Paraguai</h2>
+            <h2>📱 iPhone 17 Pro Max A3526 - 256 GB - Paraguai</h2>
             <p>Relatório gerado automaticamente em <strong>{datetime.now().strftime('%d/%m/%Y às %H:%M')}</strong>.</p>
             <p>Ofertas ordenadas do menor para o maior preço em reais.</p>
             <span class="badge">Total de Ofertas: {len(df)}</span>
@@ -209,7 +212,7 @@ def enviar_relatorio_email(df, caminho_csv=None):
             
             <p class="footer">
                 Fonte: Compras Paraguai (Ciudad del Este)<br>
-                O CSV com as ofertas de 256 GB, ordenadas por preço, está anexado.
+                O CSV com as ofertas do modelo A3526 de 256 GB, ordenadas por preço, está anexado.
             </p>
         </div>
     </body>
