@@ -137,7 +137,24 @@ def raspar_precos_paraguai(termo_busca="iphone 17 pro max"):
         print(f"[X] Erro crítico no scraping: {e}")
         return []
 
+def preparar_relatorio_256gb(df):
+    filtro = df["Produto"].fillna("").str.contains(r"\b256\s*GB\b", case=False, regex=True)
+    relatorio = df.loc[filtro].copy()
+    relatorio["Preco_BRL"] = pd.to_numeric(relatorio["Preco_BRL"], errors="coerce")
+    relatorio["Preco_USD"] = pd.to_numeric(relatorio["Preco_USD"], errors="coerce")
+    return relatorio.sort_values(
+        ["Preco_BRL", "Preco_USD", "Loja"],
+        ascending=[True, True, True],
+        na_position="last",
+        kind="mergesort",
+    ).reset_index(drop=True)
+
 def enviar_relatorio_email(df, caminho_csv=None):
+    df = preparar_relatorio_256gb(df)
+    if df.empty:
+        print("[!] Nenhuma oferta do iPhone 17 Pro Max 256 GB para incluir no relatório.")
+        return False
+
     if not EMAIL_SENHA or EMAIL_SENHA == "sua_senha_ou_senha_de_app_aqui":
         print("\n[!] AVISO: Senha de e-mail não configurada no arquivo .env.")
         print(f"    Para ativar o envio para {EMAIL_DESTINO}, defina EMAIL_SENHA no arquivo .env")
@@ -151,8 +168,19 @@ def enviar_relatorio_email(df, caminho_csv=None):
     data_formatada = datetime.now().strftime("%d/%m/%Y")
     msg["Subject"] = f"📊 Relatório Diário - iPhone no Paraguai ({data_formatada})"
 
-    # Gera tabela HTML estilizada
-    tabela_html = df.to_html(index=False, border=0, classes="tabela-dados")
+    # Prioriza o preço e a loja na tabela do e-mail; o CSV mantém todos os campos.
+    colunas_email = ["Preco_BRL", "Loja", "Produto", "Preco_USD"]
+    tabela_email = df[colunas_email].copy()
+    formatadores = {
+        "Preco_BRL": lambda valor: f"R$ {valor:,.2f}".replace(",", "X").replace(".", ",").replace("X", "."),
+        "Preco_USD": lambda valor: f"US$ {valor:,.2f}",
+    }
+    tabela_html = tabela_email.to_html(
+        index=False,
+        border=0,
+        classes="tabela-dados",
+        formatters=formatadores,
+    )
     
     corpo_html = f"""
     <html>
@@ -172,15 +200,16 @@ def enviar_relatorio_email(df, caminho_csv=None):
     </head>
     <body>
         <div class="card">
-            <h2>📱 Monitoramento de Preços - Paraguai</h2>
+            <h2>📱 iPhone 17 Pro Max 256 GB - Paraguai</h2>
             <p>Relatório gerado automaticamente em <strong>{datetime.now().strftime('%d/%m/%Y às %H:%M')}</strong>.</p>
-            <span class="badge">Total de Modelos: {len(df)}</span>
+            <p>Ofertas ordenadas do menor para o maior preço em reais.</p>
+            <span class="badge">Total de Ofertas: {len(df)}</span>
             
             {tabela_html}
             
             <p class="footer">
                 Fonte: Compras Paraguai (Ciudad del Este)<br>
-                A planilha completa (.csv) foi anexada a este e-mail.
+                O CSV com as ofertas de 256 GB, ordenadas por preço, está anexado.
             </p>
         </div>
     </body>
@@ -247,8 +276,13 @@ if __name__ == "__main__":
         salvar_historico(df, caminho_csv)
         print(f"[+] Histórico atualizado salvo em:\n    {caminho_csv}")
         
-        # Dispara o envio por e-mail
-        if not enviar_relatorio_email(df, caminho_csv):
+        # O histórico mantém todas as capacidades; o e-mail traz apenas 256 GB, do menor ao maior preço.
+        df_relatorio = preparar_relatorio_256gb(df)
+        caminho_relatorio_csv = os.path.join(desktop, "relatorio_iphone_17_pro_max_256gb.csv")
+        df_relatorio.to_csv(caminho_relatorio_csv, index=False, encoding="utf-8-sig")
+
+        # Dispara o envio por e-mail com a lista filtrada e ordenada.
+        if not enviar_relatorio_email(df_relatorio, caminho_relatorio_csv):
             raise SystemExit(1)
     else:
         print("[!] Nenhum resultado foi extraído.")
