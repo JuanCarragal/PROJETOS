@@ -146,7 +146,7 @@ def preparar_relatorio_256gb(df):
     relatorio["Preco_BRL"] = pd.to_numeric(relatorio["Preco_BRL"], errors="coerce")
     relatorio["Preco_USD"] = pd.to_numeric(relatorio["Preco_USD"], errors="coerce")
     lojas_normalizadas = relatorio["Loja"].fillna("").str.lower().str.replace(r"[^a-z0-9]", "", regex=True)
-    loja_preferida = lojas_normalizadas.str.contains(r"nissei|cellshop", regex=True)
+    loja_preferida = lojas_normalizadas.str.contains(r"nissei|cellshop|shoppingchina", regex=True)
     relatorio["Preferencia_Loja"] = loja_preferida.map({True: "Preferida", False: "Demais lojas"})
     relatorio["_Ordem_Preferencia"] = (~loja_preferida).astype(int)
     relatorio = relatorio.sort_values(
