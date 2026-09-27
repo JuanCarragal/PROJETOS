@@ -145,12 +145,17 @@ def preparar_relatorio_256gb(df):
     relatorio = df.loc[filtro].copy()
     relatorio["Preco_BRL"] = pd.to_numeric(relatorio["Preco_BRL"], errors="coerce")
     relatorio["Preco_USD"] = pd.to_numeric(relatorio["Preco_USD"], errors="coerce")
-    return relatorio.sort_values(
-        ["Preco_BRL", "Preco_USD", "Loja"],
-        ascending=[True, True, True],
+    lojas_normalizadas = relatorio["Loja"].fillna("").str.lower().str.replace(r"[^a-z0-9]", "", regex=True)
+    loja_preferida = lojas_normalizadas.str.contains(r"nissei|cellshop", regex=True)
+    relatorio["Preferencia_Loja"] = loja_preferida.map({True: "Preferida", False: "Demais lojas"})
+    relatorio["_Ordem_Preferencia"] = (~loja_preferida).astype(int)
+    relatorio = relatorio.sort_values(
+        ["_Ordem_Preferencia", "Preco_BRL", "Preco_USD", "Loja"],
+        ascending=[True, True, True, True],
         na_position="last",
         kind="mergesort",
-    ).reset_index(drop=True)
+    ).drop(columns="_Ordem_Preferencia")
+    return relatorio.reset_index(drop=True)
 
 def enviar_relatorio_email(df, caminho_csv=None):
     df = preparar_relatorio_256gb(df)
@@ -172,7 +177,7 @@ def enviar_relatorio_email(df, caminho_csv=None):
     msg["Subject"] = f"📊 Relatório Diário - iPhone no Paraguai ({data_formatada})"
 
     # Prioriza o preço e a loja na tabela do e-mail; o CSV mantém todos os campos.
-    colunas_email = ["Preco_BRL", "Loja", "Produto", "Preco_USD"]
+    colunas_email = ["Preferencia_Loja", "Preco_BRL", "Loja", "Produto", "Preco_USD"]
     tabela_email = df[colunas_email].copy()
     formatadores = {
         "Preco_BRL": lambda valor: f"R$ {valor:,.2f}".replace(",", "X").replace(".", ",").replace("X", "."),
@@ -205,14 +210,15 @@ def enviar_relatorio_email(df, caminho_csv=None):
         <div class="card">
             <h2>📱 iPhone 17 Pro Max A3526 - 256 GB - Paraguai</h2>
             <p>Relatório gerado automaticamente em <strong>{datetime.now().strftime('%d/%m/%Y às %H:%M')}</strong>.</p>
-            <p>Ofertas ordenadas do menor para o maior preço em reais.</p>
+            <p>Nissei e Cellshop aparecem primeiro; cada grupo está ordenado do menor para o maior preço em reais.</p>
+            <p>A preferência organiza a visualização e não confirma autenticidade, procedência ou condição do aparelho. Confirme se é novo ou Swap diretamente com a loja.</p>
             <span class="badge">Total de Ofertas: {len(df)}</span>
             
             {tabela_html}
             
             <p class="footer">
                 Fonte: Compras Paraguai (Ciudad del Este)<br>
-                O CSV com as ofertas do modelo A3526 de 256 GB, ordenadas por preço, está anexado.
+                O CSV com as ofertas do modelo A3526 de 256 GB, a preferência de loja e os links está anexado.
             </p>
         </div>
     </body>
@@ -279,7 +285,7 @@ if __name__ == "__main__":
         salvar_historico(df, caminho_csv)
         print(f"[+] Histórico atualizado salvo em:\n    {caminho_csv}")
         
-        # O histórico mantém todas as capacidades; o e-mail traz apenas 256 GB, do menor ao maior preço.
+        # O histórico mantém todas as ofertas; o relatório destaca Nissei e Cellshop primeiro.
         df_relatorio = preparar_relatorio_256gb(df)
         caminho_relatorio_csv = os.path.join(desktop, "relatorio_iphone_17_pro_max_256gb.csv")
         df_relatorio.to_csv(caminho_relatorio_csv, index=False, encoding="utf-8-sig")
