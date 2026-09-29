@@ -210,7 +210,7 @@ def enviar_relatorio_email(df, caminho_csv=None):
         <div class="card">
             <h2>📱 iPhone 17 Pro Max A3526 - 256 GB - Paraguai</h2>
             <p>Relatório gerado automaticamente em <strong>{datetime.now().strftime('%d/%m/%Y às %H:%M')}</strong>.</p>
-            <p>Nissei e Cellshop aparecem primeiro; cada grupo está ordenado do menor para o maior preço em reais.</p>
+            <p>Nissei, Cellshop e Shopping China aparecem primeiro; cada grupo está ordenado do menor para o maior preço em reais.</p>
             <p>A preferência organiza a visualização e não confirma autenticidade, procedência ou condição do aparelho. Confirme se é novo ou Swap diretamente com a loja.</p>
             <span class="badge">Total de Ofertas: {len(df)}</span>
             
@@ -257,13 +257,20 @@ def enviar_relatorio_email(df, caminho_csv=None):
         print(f"[X] Falha no envio do e-mail: {e}")
         return False
 
-def obter_caminho_desktop():
-    desktop = os.path.expanduser(r"~\OneDrive\Área de Trabalho")
-    if not os.path.exists(desktop):
-        desktop = os.path.expanduser(r"~\Desktop")
-    if not os.path.exists(desktop):
-        desktop = os.getcwd()
-    return desktop
+def obter_diretorio_saida():
+    if os.name == "nt":
+        diretorio = os.path.join(
+            os.path.expanduser("~"),
+            "OneDrive",
+            "Área de Trabalho",
+            "PROJETOS IA",
+            "BASE PESQUISA PARAGUAI",
+        )
+    else:
+        # No GitHub Actions, o workspace é versionado junto com o histórico remoto.
+        diretorio = os.getcwd()
+    os.makedirs(diretorio, exist_ok=True)
+    return diretorio
 
 def salvar_historico(df, caminho_csv):
     colunas = ["Data", "Modelo", "Produto", "Loja", "Preco_USD", "Preco_BRL", "Codigo", "Link_Produto", "Link_Loja"]
@@ -279,15 +286,15 @@ if __name__ == "__main__":
         df = pd.DataFrame(dados)
         print(f"\n[+] SUCESSO! Encontrados {len(df)} modelos.\n")
         
-        # Salva o arquivo CSV no Desktop
-        desktop = obter_caminho_desktop()
-        caminho_csv = os.path.join(desktop, "historico_precos_iphone.csv")
+        # No Windows, salva os arquivos gerados na pasta dedicada do OneDrive.
+        diretorio_saida = obter_diretorio_saida()
+        caminho_csv = os.path.join(diretorio_saida, "historico_precos_iphone.csv")
         salvar_historico(df, caminho_csv)
         print(f"[+] Histórico atualizado salvo em:\n    {caminho_csv}")
         
         # O histórico mantém todas as ofertas; o relatório destaca Nissei e Cellshop primeiro.
         df_relatorio = preparar_relatorio_256gb(df)
-        caminho_relatorio_csv = os.path.join(desktop, "relatorio_iphone_17_pro_max_256gb.csv")
+        caminho_relatorio_csv = os.path.join(diretorio_saida, "relatorio_iphone_17_pro_max_256gb.csv")
         df_relatorio.to_csv(caminho_relatorio_csv, index=False, encoding="utf-8-sig")
 
         # Dispara o envio por e-mail com a lista filtrada e ordenada.
