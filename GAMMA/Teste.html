@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TaskFlow AI - Apresentação Comercial</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Ícones Lucide -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Tipografia Moderna -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #0b0f19;
+            color: #f3f4f6;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .glass-card {
+            background: rgba(17, 24, 39, 0.75);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #a5b4fc 0%, #6366f1 50%, #ec4899 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .glow-bg {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, rgba(0, 0, 0, 0) 70%);
+            top: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .card-slide {
+            display: none;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.35s ease, transform 0.35s ease;
+        }
+
+        .card-slide.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+
+<body
+    class="min-h-screen flex flex-col justify-between relative overflow-x-hidden antialiased selection:bg-indigo-500 selection:text-white">
+
+    <div class="glow-bg"></div>
+
+    <!-- Barra Superior -->
+    <header
+        class="relative z-10 w-full max-w-6xl mx-auto px-6 py-5 flex items-center justify-between border-b border-white/5">
+        <div class="flex items-center space-x-3">
+            <div
+                class="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-pink-500 flex items-center justify-center shadow-lg shadow-indigo-500/20">
+                <i data-lucide="cpu" class="w-5 h-5 text-white"></i>
+            </div>
+            <span class="font-bold text-lg tracking-tight text-white">TaskFlow <span
+                    class="text-indigo-400">AI</span></span>
+        </div>
+
+        <div class="flex items-center space-x-4">
+            <span id="counter"
+                class="text-xs font-semibold px-3 py-1 rounded-full bg-white/5 border border-white/10 text-zinc-400">
+                Cartão <span id="currentCardNum" class="text-white">1</span> de 7
+            </span>
+            <button onclick="toggleViewMode()" id="viewModeBtn"
+                class="text-xs text-zinc-300 hover:text-white px-3 py-1.5 rounded-lg border border-white/10 hover:border-white/20 transition-all flex items-center gap-1.5 bg-white/[0.02]">
+                <i data-lucide="layout-list" class="w-3.5 h-3.5"></i>
+                <span>Modo Página</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Conteúdo Central dos 7 Cartões -->
+    <main class="relative z-10 flex-1 flex items-center justify-center px-4 py-8">
+        <div class="w-full max-w-5xl mx-auto" id="deckContainer">
+
+            <!-- CARD 1: Capa de Impacto -->
+            <div class="card-slide active" data-card="1">
+                <div class="glass-card rounded-3xl p-8 md:p-14 text-center relative overflow-hidden">
+                    <div
+                        class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 text-xs font-medium mb-6">
+                        <i data-lucide="sparkles" class="w-3.5 h-3.5 text-indigo-400"></i>
+                        A Nova Fronteira da Eficiência Operacional
+                    </div>
+
+                    <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight mb-6 leading-tight">
+                        Automação inteligente para empresas que querem <span class="gradient-text">escalar sem
+                            complexidade</span>.
+                    </h1>
+
+                    <p class="text-lg md:text-xl text-zinc-300 max-w-3xl mx-auto font-normal leading-relaxed mb-10">
+                        Transforme horas de rotinas operacionais manuais em fluxos autônomos com Inteligência
+                        Artificial. Libere seus times estratégicos para gerarem receita, não burocracia.
+                    </p>
+
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                        <button onclick="goToCard(7)"
+                            class="w-full sm:w-auto px-8 py-4 rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white font-semibold shadow-lg shadow-indigo-600/30 transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2">
+                            <span>Agendar Diagnóstico Gratuito</span>
+                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </button>
+                        <button onclick="nextCard()"
+                            class="w-full sm:w-auto px-6 py-4 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-zinc-300 font-medium transition-all">
+                            Ver Como Funciona
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARD 2: 3 Problemas Críticos -->
+            <div class="card-slide" data-card="2">
+                <div class="glass-card rounded-3xl p-8 md:p-12">
+                    <div class="text-center max-w-2xl mx-auto mb-10">
+                        <span class="text-xs uppercase font-bold tracking-widest text-rose-400">O Desafio de
+                            Mercado</span>
+                        <h2 class="text-3xl md:text-4xl font-bold mt-2">Onde sua equipe perde até 40% do tempo</h2>
+                        <p class="text-zinc-400 text-sm mt-2">As 3 principais barreiras que comprimem as margens de
+                            operações em crescimento.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div
+                            class="p-6 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-rose-500/30 transition-all">
+                            <div
+                                class="w-12 h-12 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 flex items-center justify-center mb-5">
+                                <i data-lucide="refresh-cw-off" class="w-6 h-6"></i>
+                            </div>
+                            <h3 class="text-lg font-bold text-white mb-2">Gargalos e Retrabalho</h3>
+                            <p class="text-zinc-400 text-sm leading-relaxed">
+                                Preenchimento repetitivo de planilhas, conciliação manual de relatórios e digitação de
+                                dados entre sistemas desconectados sujeitos a erro humano.
+                            </p>
+                        </div>
+
+                        <div
+                            class="p-6 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-amber-500/30 transition-all">
+                            <div
+                                class="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center mb-5">
+                                <i data-lucide="eye-off" class="w-6 h-6"></i>
+                            </div>
+                            <h3 class="text-lg font-bold text-white mb-2">Falta de Visibilidade</h3>
+                            <p class="text-zinc-400 text-sm leading-relaxed">
+                                Gestores dependem de relatórios defasados para tomar decisões críticas, identificando
+                                atrasos operacionais apenas quando o cliente reclama.
+                            </p>
+                        </div>
+
+                        <div
+                            class="p-6 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-indigo-500/30 transition-all">
+                            <div
+                                class="w-12 h-12 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center mb-5">
+                                <i data-lucide="trending-down" class="w-6 h-6"></i>
+                            </div>
+                            <h3 class="text-lg font-bold text-white mb-2">Custo de Escala Elevado</h3>
+                            <p class="text-zinc-400 text-sm leading-relaxed">
+                                Para dobrar o volume de negócios, a empresa precisa dobrar a equipe de back-office,
+                                comprimindo a margem líquida e gerando constante sobrecarga.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARD 3: A Solução TaskFlow AI -->
+            <div class="card-slide" data-card="3">
+                <div class="glass-card rounded-3xl p-8 md:p-12">
+                    <div class="max-w-2xl mb-8">
+                        <span class="text-xs uppercase font-bold tracking-widest text-indigo-400">A Solução</span>
+                        <h2 class="text-3xl md:text-4xl font-bold mt-2">Orquestração Operacional Inteligente</h2>
+                        <p class="text-zinc-400 text-sm mt-2">Uma camada de inteligência integrada diretamente aos seus
+                            CRMs, ERPs, e-mails e planilhas.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div
+                            class="p-6 rounded-2xl bg-gradient-to-b from-indigo-500/10 to-transparent border border-indigo-500/20">
+                            <div
+                                class="w-10 h-10 rounded-lg bg-indigo-500/20 text-indigo-300 flex items-center justify-center mb-4">
+                                <i data-lucide="file-text" class="w-5 h-5"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-white mb-2">Processamento Autônomo</h3>
+                            <p class="text-zinc-400 text-sm leading-relaxed">
+                                Lê documentos, notas fiscais, contratos e e-mails, extrai dados críticos e alimenta seus
+                                sistemas de gestão sem qualquer digitação manual.
+                            </p>
+                        </div>
+
+                        <div
+                            class="p-6 rounded-2xl bg-gradient-to-b from-indigo-500/10 to-transparent border border-indigo-500/20">
+                            <div
+                                class="w-10 h-10 rounded-lg bg-indigo-500/20 text-indigo-300 flex items-center justify-center mb-4">
+                                <i data-lucide="git-merge" class="w-5 h-5"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-white mb-2">Decisão Adaptativa</h3>
+                            <p class="text-zinc-400 text-sm leading-relaxed">
+                                Supera regras mecânicas rígidas: compreende o contexto do negócio, detecta variações e
+                                resolve exceções comuns de maneira automatizada.
+                            </p>
+                        </div>
+
+                        <div
+                            class="p-6 rounded-2xl bg-gradient-to-b from-indigo-500/10 to-transparent border border-indigo-500/20">
+                            <div
+                                class="w-10 h-10 rounded-lg bg-indigo-500/20 text-indigo-300 flex items-center justify-center mb-4">
+                                <i data-lucide="activity" class="w-5 h-5"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-white mb-2">Visão 360° Unificada</h3>
+                            <p class="text-zinc-400 text-sm leading-relaxed">
+                                Painel analítico em tempo real para monitorar o status dos processos, horas poupadas e
+                                gargalos sanados em um único lugar.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARD 4: Diferenciais Competitivos -->
+            <div class="card-slide" data-card="4">
+                <div class="glass-card rounded-3xl p-8 md:p-12">
+                    <div class="text-center max-w-2xl mx-auto mb-8">
+                        <span class="text-xs uppercase font-bold tracking-widest text-indigo-400">Comparativo</span>
+                        <h2 class="text-3xl md:text-4xl font-bold mt-2">Por que o TaskFlow AI se destaca?</h2>
+                        <p class="text-zinc-400 text-sm mt-2">Entenda a diferença entre scripts antigos e a orquestração
+                            por modelos de linguagem.</p>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm">
+                            <thead>
+                                <tr class="border-b border-white/10 text-zinc-400 text-xs uppercase font-semibold">
+                                    <th class="py-3 px-4">Pilar</th>
+                                    <th class="py-3 px-4 text-zinc-500">RPA / Automações Tradicionais</th>
+                                    <th class="py-3 px-4 text-indigo-400 font-bold bg-indigo-500/5 rounded-t-lg">
+                                        TaskFlow AI</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-white/5">
+                                <tr>
+                                    <td class="py-4 px-4 font-semibold text-white">Flexibilidade</td>
+                                    <td class="py-4 px-4 text-zinc-400">Quebram diante de qualquer mudança de formato
+                                    </td>
+                                    <td class="py-4 px-4 text-indigo-300 font-medium bg-indigo-500/5">IA Adaptativa:
+                                        entende variações de dados</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-4 px-4 font-semibold text-white">Tempo de Implantação</td>
+                                    <td class="py-4 px-4 text-zinc-400">Meses de consultoria e programação complexa</td>
+                                    <td class="py-4 px-4 text-indigo-300 font-medium bg-indigo-500/5">Ativação em até 7
+                                        dias com integrações prontas</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-4 px-4 font-semibold text-white">Usabilidade</td>
+                                    <td class="py-4 px-4 text-zinc-400">Depende de engenheiros de software dedicados
+                                    </td>
+                                    <td class="py-4 px-4 text-indigo-300 font-medium bg-indigo-500/5">Configuração em
+                                        português natural sem código</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-4 px-4 font-semibold text-white">Conformidade</td>
+                                    <td class="py-4 px-4 text-zinc-400">Scripts fragmentados sem rastreabilidade</td>
+                                    <td class="py-4 px-4 text-indigo-300 font-medium bg-indigo-500/5 rounded-b-lg">LGPD
+                                        e GDPR, logs detalhados e criptografia total</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARD 5: Planos & Preços -->
+            <div class="card-slide" data-card="5">
+                <div class="glass-card rounded-3xl p-8 md:p-12">
+                    <div class="text-center max-w-2xl mx-auto mb-8">
+                        <span class="text-xs uppercase font-bold tracking-widest text-indigo-400">Planos & Preços</span>
+                        <h2 class="text-3xl md:text-4xl font-bold mt-2">Investimento transparente e escalável</h2>
+                        <p class="text-zinc-400 text-sm mt-2">Escolha o modelo ideal para o estágio atual da sua
+                            operação.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- Starter -->
+                        <div
+                            class="p-6 rounded-2xl bg-white/[0.02] border border-white/5 flex flex-col justify-between">
+                            <div>
+                                <h3 class="text-xl font-bold text-white">Starter</h3>
+                                <p class="text-zinc-400 text-xs mt-1">Para times de até 15 pessoas</p>
+                                <div class="my-5">
+                                    <span class="text-3xl font-extrabold text-white">R$ 490</span>
+                                    <span class="text-zinc-400 text-xs">/mês</span>
+                                </div>
+                                <ul class="space-y-3 text-xs text-zinc-300">
+                                    <li class="flex items-center gap-2"><i data-lucide="check"
+                                            class="w-4 h-4 text-indigo-400"></i> Até 10 fluxos de automação</li>
+                                    <li class="flex items-center gap-2"><i data-lucide="check"
+                                            class="w-4 h-4 text-indigo-400"></i> Google Workspace, Slack & Notion</li>
+                                    <li class="flex items-center gap-2"><i data-lucide="check"
+                                            class="w-4 h-4 text-indigo-400"></i> Suporte por e-mail comercial</li>
+                                </ul>
+                            </div>
+                            <button onclick="goToCard(7)"
+                                class="mt-8 w-full py-2.5 rounded-xl border border-white/10 hover:border-white/20 text-xs font-semibold text-zinc-200 transition-all">
+                                Começar no Starter
+                            </button>
+                        </div>
+
+                        <!-- Professional (Destaque) -->
+                        <div
+                            class="p-6 rounded-2xl bg-gradient-to-b from-indigo-950/60 to-slate-900/90 border-2 border-indigo-500/50 flex flex-col justify-between relative shadow-xl shadow-indigo-500/10">
+                            <span
+                                class="absolute -top-3 left-1/2 transform -translate-x-1/2 px-3 py-0.5 rounded-full bg-indigo-500 text-[10px] font-bold uppercase tracking-wider text-white">Mais
+                                Escolhido</span>
+                            <div>
+                                <h3 class="text-xl font-bold text-white">Professional</h3>
+                                <p class="text-indigo-200 text-xs mt-1">Operações em expansão (15 a 50 pessoas)</p>
+                                <div class="my-5">
+                                    <span class="text-3xl font-extrabold text-white">R$ 1.290</span>
+                                    <span class="text-zinc-400 text-xs">/mês</span>
+                                </div>
+                                <ul class="space-y-3 text-xs text-zinc-200">
+                                    <li class="flex items-center gap-2"><i data-lucide="check"
+                                            class="w-4 h-4 text-indigo-400"></i> <strong>Fluxos ilimitados</strong> com
+                                        IA</li>
+                                    <li class="flex items-center gap-2"><i data-lucide="check"
+                                            class="w-4 h-4 text-indigo-400"></i> Integração com ERPs, CRMs & Webhooks
+                                    </li>
+                                    <li class="flex items-center gap-2"><i data-lucide="check"
+                                            class="w-4 h-4 text-indigo-400"></i> Suporte prioritário via WhatsApp</li>
+                                    <li class="flex items-center gap-2"><i data-lucide="check"
+                                            class="w-4 h-4 text-indigo-400"></i> Painéis personalizados de ROI</li>
+                                </ul>
+                            </div>
+                            <button onclick="goToCard(7)"
+                                class="mt-8 w-full py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-semibold text-white shadow-lg shadow-indigo-600/30 transition-all">
+                                Escolher Professional
+                            </button>
+                        </div>
+
+                        <!-- Enterprise -->
+                        <div
+                            class="p-6 rounded-2xl bg-white/[0.02] border border-white/5 flex flex-col justify-between">
+                            <div>
+                                <h3 class="text-xl font-bold text-white">Enterprise</h3>
+                                <p class="text-zinc-400 text-xs mt-1">Para operações com mais de 50 pessoas</p>
+                                <div class="my-5">
+                                    <span class="text-3xl font-extrabold text-white">Sob Medida</span>
+                                </div>
+                                <ul class="space-y-3 text-xs text-zinc-300">
+                                    <li class="flex items-center gap-2"><i data-lucide="check"
+                                            class="w-4 h-4 text-indigo-400"></i> Instância de IA dedicada e privada</li>
+                                    <li class="flex items-center gap-2"><i data-lucide="check"
+                                            class="w-4 h-4 text-indigo-400"></i> Conectores legados e banco proprietário
+                                    </li>
+                                    <li class="flex items-center gap-2"><i data-lucide="check"
+                                            class="w-4 h-4 text-indigo-400"></i> Gerente de Contas dedicado + SLA de 1h
+                                    </li>
+                                </ul>
+                            </div>
+                            <button onclick="goToCard(7)"
+                                class="mt-8 w-full py-2.5 rounded-xl border border-white/10 hover:border-white/20 text-xs font-semibold text-zinc-200 transition-all">
+                                Falar com Especialista
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARD 6: Resultados & Depoimentos -->
+            <div class="card-slide" data-card="6">
+                <div class="glass-card rounded-3xl p-8 md:p-12">
+                    <div class="text-center max-w-2xl mx-auto mb-10">
+                        <span class="text-xs uppercase font-bold tracking-widest text-indigo-400">Resultados
+                            Comprovados</span>
+                        <h2 class="text-3xl md:text-4xl font-bold mt-2">Impacto mensurável desde o primeiro mês</h2>
+                    </div>
+
+                    <!-- Métricas -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10 text-center">
+                        <div class="p-6 rounded-2xl bg-white/[0.02] border border-white/5">
+                            <span class="block text-4xl font-extrabold text-indigo-400 mb-1">+120h</span>
+                            <span class="text-xs text-zinc-400">Economizadas por colaborador/mês</span>
+                        </div>
+                        <div class="p-6 rounded-2xl bg-white/[0.02] border border-white/5">
+                            <span class="block text-4xl font-extrabold text-indigo-400 mb-1">99,4%</span>
+                            <span class="text-xs text-zinc-400">Precisão na triagem e conciliação</span>
+                        </div>
+                        <div class="p-6 rounded-2xl bg-white/[0.02] border border-white/5">
+                            <span class="block text-4xl font-extrabold text-indigo-400 mb-1">45 dias</span>
+                            <span class="text-xs text-zinc-400">Tempo médio de retorno do investimento</span>
+                        </div>
+                    </div>
+
+                    <!-- Depoimentos -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="p-6 rounded-2xl bg-white/[0.03] border border-white/5 text-sm italic text-zinc-300">
+                            <p class="mb-4">"O TaskFlow AI eliminou 85% do tempo que meu time gastava cruzando notas e
+                                pedidos. Dobramos nossa entrega sem precisar contratar mais back-office."</p>
+                            <div class="not-italic flex items-center gap-3 mt-4">
+                                <div
+                                    class="w-9 h-9 rounded-full bg-indigo-500/20 text-indigo-300 flex items-center justify-center font-bold text-xs">
+                                    MR</div>
+                                <div>
+                                    <div class="font-bold text-white text-xs">Mariana Rios</div>
+                                    <div class="text-[11px] text-zinc-400">Diretora de Operações na LogCorp</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-6 rounded-2xl bg-white/[0.03] border border-white/5 text-sm italic text-zinc-300">
+                            <p class="mb-4">"A velocidade de implantação foi incrível. Em menos de 7 dias nossos
+                                principais processos de triagem e faturamento já rodavam sozinhos."</p>
+                            <div class="not-italic flex items-center gap-3 mt-4">
+                                <div
+                                    class="w-9 h-9 rounded-full bg-pink-500/20 text-pink-300 flex items-center justify-center font-bold text-xs">
+                                    CE</div>
+                                <div>
+                                    <div class="font-bold text-white text-xs">Carlos Eduardo</div>
+                                    <div class="text-[11px] text-zinc-400">COO na FinTech Prime</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARD 7: Chamada para Ação (CTA) -->
+            <div class="card-slide" data-card="7">
+                <div class="glass-card rounded-3xl p-8 md:p-14 text-center max-w-3xl mx-auto">
+                    <div
+                        class="w-16 h-16 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center mx-auto mb-6">
+                        <i data-lucide="calendar-check-2" class="w-8 h-8"></i>
+                    </div>
+
+                    <h2 class="text-3xl md:text-5xl font-extrabold mb-4">
+                        Pronto para destravar a eficiência da sua equipe?
+                    </h2>
+                    <p class="text-zinc-300 text-sm md:text-base max-w-xl mx-auto mb-8">
+                        Agende uma **sessão de diagnóstico gratuita de 20 minutos** e receba um mapa detalhado de
+                        gargalos operacionais da sua empresa.
+                    </p>
+
+                    <div class="bg-white/[0.03] border border-white/10 rounded-2xl p-6 text-left mb-8 max-w-lg mx-auto">
+                        <h4 class="text-xs uppercase font-bold tracking-wider text-indigo-400 mb-3">O que faremos na
+                            sessão:</h4>
+                        <ul class="space-y-2.5 text-xs text-zinc-300">
+                            <li class="flex items-center gap-2"><i data-lucide="check-circle-2"
+                                    class="w-4 h-4 text-emerald-400"></i> Mapeamento dos 3 maiores gargalos da rotina
+                                atual</li>
+                            <li class="flex items-center gap-2"><i data-lucide="check-circle-2"
+                                    class="w-4 h-4 text-emerald-400"></i> Demonstração personalizada para o seu setor
+                            </li>
+                            <li class="flex items-center gap-2"><i data-lucide="check-circle-2"
+                                    class="w-4 h-4 text-emerald-400"></i> Estimativa do ROI nos primeiros 90 dias</li>
+                        </ul>
+                    </div>
+
+                    <a href="https://calendly.com" target="_blank"
+                        class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white font-semibold shadow-xl shadow-indigo-600/30 transition-all transform hover:-translate-y-0.5">
+                        <span>Agendar Demonstração no Calendly</span>
+                        <i data-lucide="external-link" class="w-4 h-4"></i>
+                    </a>
+                    <p class="text-[11px] text-zinc-500 mt-4">Sem compromisso • Vagas limitadas para atendimento
+                        consultivo</p>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Rodapé de Navegação -->
+    <footer class="relative z-10 w-full max-w-5xl mx-auto px-6 py-6 flex items-center justify-between">
+        <button onclick="prevCard()" id="prevBtn"
+            class="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold text-zinc-300 transition-all disabled:opacity-30 disabled:cursor-not-allowed">
+            <i data-lucide="chevron-left" class="w-4 h-4"></i>
+            <span>Anterior</span>
+        </button>
+
+        <!-- Indicadores de Pontos (Dots) -->
+        <div class="flex items-center gap-2" id="dotsContainer"></div>
+
+        <button onclick="nextCard()" id="nextBtn"
+            class="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-semibold text-white transition-all shadow-md shadow-indigo-600/20">
+            <span>Próximo</span>
+            <i data-lucide="chevron-right" class="w-4 h-4"></i>
+        </button>
+    </footer>
+
+    <script>
+        let currentCard = 1;
+        const totalCards = 7;
+        let isScrollMode = false;
+
+        function updateView() {
+            const slides = document.querySelectorAll('.card-slide');
+            slides.forEach(slide => {
+                const num = parseInt(slide.getAttribute('data-card'));
+                if (isScrollMode) {
+                    slide.style.display = 'block';
+                    slide.style.opacity = '1';
+                    slide.style.marginBottom = '2.5rem';
+                } else {
+                    slide.style.marginBottom = '0';
+                    if (num === currentCard) {
+                        slide.classList.add('active');
+                        slide.style.display = 'block';
+                        setTimeout(() => slide.style.opacity = '1', 10);
+                    } else {
+                        slide.classList.remove('active');
+                        slide.style.display = 'none';
+                        slide.style.opacity = '0';
+                    }
+                }
+            });
+
+            document.getElementById('currentCardNum').textContent = currentCard;
+            document.getElementById('prevBtn').disabled = (currentCard === 1);
+
+            const nextBtn = document.getElementById('nextBtn');
+            if (currentCard === totalCards) {
+                nextBtn.innerHTML = `<span>Agendar</span><i data-lucide="check" class="w-4 h-4"></i>`;
+            } else {
+                nextBtn.innerHTML = `<span>Próximo</span><i data-lucide="chevron-right" class="w-4 h-4"></i>`;
+            }
+
+            renderDots();
+            lucide.createIcons();
+        }
+
+        function renderDots() {
+            const container = document.getElementById('dotsContainer');
+            container.innerHTML = '';
+            for (let i = 1; i <= totalCards; i++) {
+                const dot = document.createElement('button');
+                dot.className = `h-2 rounded-full transition-all ${i === currentCard ? 'w-8 bg-indigo-500' : 'w-2 bg-white/20 hover:bg-white/40'}`;
+                dot.onclick = () => goToCard(i);
+                container.appendChild(dot);
+            }
+        }
+
+        function nextCard() {
+            if (currentCard < totalCards) {
+                currentCard++;
+                updateView();
+            } else {
+                goToCard(7);
+            }
+        }
+
+        function prevCard() {
+            if (currentCard > 1) {
+                currentCard--;
+                updateView();
+            }
+        }
+
+        function goToCard(num) {
+            if (isScrollMode) toggleViewMode();
+            currentCard = num;
+            updateView();
+        }
+
+        function toggleViewMode() {
+            isScrollMode = !isScrollMode;
+            const btn = document.getElementById('viewModeBtn');
+            const footer = document.querySelector('footer');
+            if (isScrollMode) {
+                btn.innerHTML = `<i data-lucide="layers" class="w-3.5 h-3.5"></i><span>Modo Slides</span>`;
+                footer.style.display = 'none';
+            } else {
+                btn.innerHTML = `<i data-lucide="layout-list" class="w-3.5 h-3.5"></i><span>Modo Página</span>`;
+                footer.style.display = 'flex';
+            }
+            updateView();
+        }
+
+        // Atalhos de teclado
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') nextCard();
+            if (e.key === 'ArrowLeft') prevCard();
+        });
+
+        updateView();
+    </script>
+</body>
+
+</html>

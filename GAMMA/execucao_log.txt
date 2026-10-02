@@ -1,0 +1,233 @@
+O sistema n�o pode encontrar o caminho especificado.
+[*] Acessando portal: https://www.comprasparaguai.com.br/busca/?q=iphone+17+pro+max
+[+] Conexão liberada (Status 200)! Analisando o HTML...
+
+[+] SUCESSO! Encontrados 20 modelos.
+
+[+] Planilha atualizada salva em:
+    C:\Users\carra\OneDrive\Área de Trabalho\historico_iphone_paraguai.csv
+
+[!] AVISO: Senha de e-mail não configurada no arquivo .env.
+    Para ativar o envio para carragal@hotmail.com, defina EMAIL_SENHA no arquivo .env
+[*] Acessando portal: https://www.comprasparaguai.com.br/busca/?q=iphone+17+pro+max
+[+] Conexão liberada (Status 200)! Analisando o HTML...
+
+[+] SUCESSO! Encontrados 20 modelos.
+
+[+] Planilha atualizada salva em:
+    C:\Users\carra\OneDrive\Área de Trabalho\historico_iphone_paraguai.csv
+[*] Preparando envio de e-mail para: carragal@hotmail.com via smtp-mail.outlook.com...
+[X] Falha no envio do e-mail: (535, b'5.7.3 Authentication unsuccessful [CP6P284CA0047.BRAP284.PROD.OUTLOOK.COM 2026-09-24T18:21:47.876Z 08DF19FCC2FBC534]')
+[*] Acessando portal: https://www.comprasparaguai.com.br/busca/?q=iphone+17+pro+max
+[+] Conexão liberada (Status 200)! Analisando o HTML...
+
+[+] SUCESSO! Encontrados 20 modelos.
+
+[+] Planilha atualizada salva em:
+    C:\Users\carra\OneDrive\Área de Trabalho\historico_iphone_paraguai.csv
+[*] Preparando envio de e-mail para: carragal@hotmail.com via smtp-mail.outlook.com...
+[X] Falha no envio do e-mail: (535, b'5.7.3 Authentication unsuccessful [CP3P284CA0142.BRAP284.PROD.OUTLOOK.COM 2026-09-24T18:37:51.846Z 08DF19F96BB9550B]')
+[*] Acessando portal: https://www.comprasparaguai.com.br/busca/?q=iphone+17+pro+max
+[+] Conexão liberada (Status 200)! Analisando o HTML...
+
+[+] SUCESSO! Encontrados 20 modelos.
+
+[+] Planilha atualizada salva em:
+    C:\Users\carra\OneDrive\Área de Trabalho\historico_iphone_paraguai.csv
+[*] Preparando envio de e-mail para: carragal@hotmail.com via smtp-mail.outlook.com...
+[X] Falha no envio do e-mail: (535, b'5.7.3 Authentication unsuccessful [CP5P284CA0054.BRAP284.PROD.OUTLOOK.COM 2026-09-24T18:39:34.259Z 08DF19F4F9638F7D]')
+[*] Acessando portal: https://www.comprasparaguai.com.br/busca/?q=iphone+17+pro+max
+[+] Conexão liberada (Status 200)! Analisando o HTML...
+
+[+] SUCESSO! Encontrados 20 modelos.
+
+[+] Planilha atualizada salva em:
+    C:\Users\carra\OneDrive\Área de Trabalho\historico_iphone_paraguai.csv
+[*] Preparando envio de e-mail para: carragal@hotmail.com via smtp-mail.outlook.com...
+[X] Falha no envio do e-mail: (535, b'5.7.3 Authentication unsuccessful [CP5P284CA0146.BRAP284.PROD.OUTLOOK.COM 2026-09-24T18:50:31.433Z 08DF19EBFCD19C48]')
+[*] Acessando portal: https://www.comprasparaguai.com.br/busca/?q=iphone+17+pro+max
+[+] Conexão liberada (Status 200)! Analisando o HTML...
+
+[+] SUCESSO! Encontrados 20 modelos.
+
+[+] Planilha atualizada salva em:
+    C:\Users\carra\OneDrive\Área de Trabalho\historico_iphone_paraguai.csv
+[*] Preparando envio de e-mail para: carragal@hotmail.com via smtp-mail.outlook.com...
+[X] Falha no envio do e-mail: (535, b'5.7.3 Authentication unsuccessful [CP6P284CA0050.BRAP284.PROD.OUTLOOK.COM 2026-09-24T18:51:52.450Z 08DF1A01A200597D]')
+[*] Acessando portal: https://www.comprasparaguai.com.br/busca/?q=iphone+17+pro+max
+[+] Conexão liberada (Status 200)! Analisando o HTML...
+
+[+] SUCESSO! Encontrados 20 modelos.
+
+[+] Planilha atualizada salva em:
+    C:\Users\carra\OneDrive\Área de Trabalho\historico_iphone_paraguai.csv
+[*] Preparando envio de e-mail para: carragal@hotmail.com via smtp-mail.outlook.com...
+[X] Falha no envio do e-mail: (535, b'5.7.3 Authentication unsuccessful [CPYP284CA0008.BRAP284.PROD.OUTLOOK.COM 2026-09-24T19:06:26.638Z 08DF1A2FDDF0C9D8]')
+[*] Acessando portal: https://www.comprasparaguai.com.br/busca/?q=iphone+17+pro+max
+[+] Conexão liberada (Status 200)! Analisando o HTML...
+
+[+] SUCESSO! Encontrados 20 modelos.
+
+[+] Planilha atualizada salva em:
+    C:\Users\carra\OneDrive\Área de Trabalho\historico_iphone_paraguai.csv
+[*] Preparando envio de e-mail para: carragal@hotmail.com via smtp-mail.outlook.com...
+[X] Falha no envio do e-mail: (535, b'5.7.3 Authentication unsuccessful [CP6P284CA0062.BRAP284.PROD.OUTLOOK.COM 2026-09-24T19:17:26.085Z 08DF19E673726197]')
+[*] Acessando portal: https://www.comprasparaguai.com.br/busca/?q=iphone+17+pro+max
+[+] Conexão liberada (Status 200)! Analisando o HTML...
+
+[+] SUCESSO! Encontrados 20 modelos.
+
+[+] Planilha atualizada salva em:
+    C:\Users\carra\OneDrive\Área de Trabalho\historico_iphone_paraguai.csv
+[*] Preparando envio de e-mail para: carragal@hotmail.com via smtp.gmail.com...
+[+] E-mail enviado com sucesso para carragal@hotmail.com!
+^C[*] Acessando busca: https://www.comprasparaguai.com.br/busca/?q=iphone+17+pro+max
+[+] Conexão liberada! Coletando modelos...
+[+] 20 modelos encontrados. Buscando ofertas por loja...
+   -> Celular Apple iPhone 17 Pro Max 256GB
+   -> Celular Apple iPhone 17 Pro Max 512GB
+   -> Celular Apple iPhone 17 Pro Max 1TB
+   -> Celular Apple iPhone 15 Pro Max 256GB Swap Grade A
+   -> Celular Apple iPhone 17 Pro Max 2TB
+   -> Celular Apple iPhone Air 256GB
+   -> Celular Apple iPhone 17 Pro Max 512GB Recondiciona
+   -> Celular Apple iPhone 15 Pro Max 256GB Swap Grade B
+   -> Celular Apple iPhone 17 Pro Max 256GB Swap Grade A
+   -> Celular Apple iPhone 17 Pro Max 256GB Recondiciona
+   -> Celular Apple iPhone 16 Pro Max 1TB
+   -> Celular Apple iPhone 17 Pro Max 1TB Recondicionado
+   -> Celular Apple iPhone 15 Pro Max 256GB Swap Grade C
+   -> Celular Motorola Moto G04s XT-2421 Dual Chip 64GB 
+   -> Celular Samsung Galaxy A36 SM-A366E Dual Chip 128G
+   -> Capa Protetora Spigen Nano Pop Hybrid Magfit para 
+   -> Capa Protetora Spigen Nano Pop Hybrid (Magfit) ACS
+   -> Capa Protetora Spigen Core Armor Magfit para iPhon
+   -> Estojo Protetor Spigen Core Armor Magfit para iPho
+   -> Estojo Protetor Spigen Slim Armor (Magfit) para iP
+
+[+] SUCESSO! Encontrados 441 modelos.
+
+[+] Planilha atualizada salva em:
+    C:\Users\carra\OneDrive\Área de Trabalho\historico_iphone_paraguai.csv
+[*] Preparando envio de e-mail para: carragal@hotmail.com via smtp.gmail.com...
+[+] E-mail enviado com sucesso para carragal@hotmail.com!
+[*] Acessando busca: https://www.comprasparaguai.com.br/busca/?q=iphone+17+pro+max
+[+] Conexão liberada! Coletando modelos...
+[+] 20 modelos encontrados. Buscando ofertas por loja...
+   -> Celular Apple iPhone 17 Pro Max 256GB
+   -> Celular Apple iPhone 17 Pro Max 512GB
+   -> Celular Apple iPhone 17 Pro Max 1TB
+   -> Celular Apple iPhone 15 Pro Max 256GB Swap Grade A
+   -> Celular Apple iPhone 17 Pro Max 2TB
+   -> Celular Apple iPhone Air 256GB
+   -> Celular Apple iPhone 17 Pro Max 512GB Recondiciona
+   -> Celular Apple iPhone 15 Pro Max 256GB Swap Grade B
+   -> Celular Apple iPhone 17 Pro Max 256GB Swap Grade A
+   -> Celular Apple iPhone 17 Pro Max 256GB Recondiciona
+   -> Celular Apple iPhone 17 Pro Max 1TB Recondicionado
+   -> Celular Apple iPhone 15 Pro Max 256GB Swap Grade C
+   -> Celular Samsung Galaxy A36 SM-A366E Dual Chip 128G
+   -> Capa Protetora Spigen Nano Pop Hybrid Magfit para 
+   -> Capa Protetora Spigen Nano Pop Hybrid (Magfit) ACS
+   -> Capa Protetora Spigen Core Armor Magfit para iPhon
+   -> Estojo Protetor Spigen Core Armor Magfit para iPho
+   -> Estojo Protetor Spigen Slim Armor (Magfit) para iP
+   -> Estojo Protetor Smallrig 5551 para iPhone 17 Pro M
+   -> Estojo Protetora Apple Magsafe para iPhone 17 Pro 
+
+[+] SUCESSO! Encontrados 418 modelos.
+
+[+] Planilha atualizada salva em:
+    C:\Users\carra\OneDrive\Área de Trabalho\historico_iphone_paraguai.csv
+[*] Preparando envio de e-mail para: carragal@hotmail.com via smtp.gmail.com...
+[+] E-mail enviado com sucesso para carragal@hotmail.com!
+[*] Acessando busca: https://www.comprasparaguai.com.br/busca/?q=iphone+17+pro+max
+[+] Conexão liberada! Coletando modelos...
+[+] 20 modelos encontrados. Buscando ofertas por loja...
+   -> Celular Apple iPhone 17 Pro Max 256GB
+   -> Celular Apple iPhone 17 Pro Max 512GB
+   -> Celular Apple iPhone 17 Pro Max 1TB
+   -> Celular Apple iPhone 15 Pro Max 256GB Swap Grade A
+   -> Celular Apple iPhone 17 Pro Max 2TB
+   -> Celular Apple iPhone Air 256GB
+   -> Celular Apple iPhone 17 Pro Max 512GB Recondiciona
+   -> Celular Apple iPhone 15 Pro Max 256GB Swap Grade B
+   -> Celular Apple iPhone 17 Pro Max 256GB Swap Grade A
+   -> Celular Apple iPhone 17 Pro Max 256GB Recondiciona
+   -> Celular Apple iPhone 17 Pro Max 1TB Recondicionado
+   -> Celular Apple iPhone 15 Pro Max 256GB Swap Grade C
+   -> Capa Protetora Spigen Nano Pop Hybrid Magfit para 
+   -> Capa Protetora Spigen Nano Pop Hybrid (Magfit) ACS
+   -> Capa Protetora Spigen Core Armor Magfit para iPhon
+   -> Estojo Protetor Spigen Core Armor Magfit para iPho
+   -> Estojo Protetor Spigen Slim Armor (Magfit) para iP
+   -> Estojo Protetor Smallrig 5551 para iPhone 17 Pro M
+   -> Estojo Protetora Apple Magsafe para iPhone 17 Pro 
+   -> Estojo Protetora Apple Magsafe para iPhone 17 Pro 
+
+[+] SUCESSO! Encontrados 432 modelos.
+
+[+] Planilha atualizada salva em:
+    C:\Users\carra\OneDrive\Área de Trabalho\historico_iphone_paraguai.csv
+[*] Preparando envio de e-mail para: carragal@hotmail.com via smtp.gmail.com...
+[+] E-mail enviado com sucesso para carragal@hotmail.com!
+[*] Acessando busca: https://www.comprasparaguai.com.br/busca/?q=iphone+17+pro+max
+[+] Conexão liberada! Coletando modelos...
+[+] 20 modelos encontrados. Buscando ofertas por loja...
+   -> Celular Apple iPhone 17 Pro Max 256GB
+   -> Celular Apple iPhone 17 Pro Max 512GB
+   -> Celular Apple iPhone 17 Pro Max 1TB
+   -> Celular Apple iPhone 15 Pro Max 256GB Swap Grade A
+   -> Celular Apple iPhone Air 256GB
+   -> Celular Apple iPhone 17 Pro Max 2TB
+   -> Celular Apple iPhone 17 Pro Max 512GB Recondiciona
+   -> Celular Apple iPhone 17 Pro Max 256GB Swap Grade A
+   -> Celular Apple iPhone 15 Pro Max 256GB Swap Grade B
+   -> Celular Apple iPhone 17 Pro Max 256GB Recondiciona
+   -> Celular Realme C75 RMX3941 Dual Chip 256GB 4G
+   -> Celular Apple iPhone 17 Pro Max 1TB Recondicionado
+   -> Celular Apple iPhone 15 Pro Max 256GB Swap Grade C
+   -> Celular Motorola Moto G04s XT-2421 Dual Chip 64GB 
+   -> Capa Protetora Spigen Nano Pop Hybrid Magfit para 
+   -> Capa Protetora Spigen Nano Pop Hybrid (Magfit) ACS
+   -> Capa Protetora Spigen Core Armor Magfit para iPhon
+   -> Estojo Protetor Spigen Core Armor Magfit para iPho
+   -> Estojo Protetor Spigen Slim Armor (Magfit) para iP
+   -> Estojo Protetor Smallrig 5551 para iPhone 17 Pro M
+
+[+] SUCESSO! Encontrados 431 modelos.
+
+[+] Planilha atualizada salva em:
+    C:\Users\carra\OneDrive\Área de Trabalho\historico_iphone_paraguai.csv
+[*] Preparando envio de e-mail para: carragal@hotmail.com via smtp.gmail.com...
+[+] E-mail enviado com sucesso para carragal@hotmail.com!
+[*] Acessando busca: https://www.comprasparaguai.com.br/busca/?q=iphone+17+pro+max
+[+] Conexão liberada! Coletando modelos...
+[+] 20 modelos encontrados. Buscando ofertas por loja...
+   -> Celular Apple iPhone 17 Pro Max 256GB
+   -> Celular Apple iPhone 17 Pro Max 512GB
+   -> Celular Apple iPhone 17 Pro Max 1TB
+   -> Celular Apple iPhone 15 Pro Max 256GB Swap Grade A
+   -> Celular Apple iPhone Air 256GB
+   -> Celular Apple iPhone 17 Pro Max 2TB
+   -> Celular Apple iPhone 17 Pro Max 512GB Recondiciona
+   -> Celular Apple iPhone 17 Pro Max 256GB Swap Grade A
+   -> Celular Apple iPhone 15 Pro Max 256GB Swap Grade B
+   -> Celular Apple iPhone 17 Pro Max 256GB Recondiciona
+   -> Celular Apple iPhone 17 Pro Max 1TB Recondicionado
+   -> Celular Apple iPhone 15 Pro Max 256GB Swap Grade C
+   -> Celular Motorola Moto G04s XT-2421 Dual Chip 64GB 
+   -> Capa Protetora Spigen Nano Pop Hybrid Magfit para 
+   -> Capa Protetora Spigen Nano Pop Hybrid (Magfit) ACS
+   -> Capa Protetora Spigen Core Armor Magfit para iPhon
+   -> Estojo Protetor Spigen Core Armor Magfit para iPho
+   -> Estojo Protetor Spigen Slim Armor (Magfit) para iP
+   -> Estojo Protetor Smallrig 5551 para iPhone 17 Pro M
+   -> Estojo Protetora Apple Magsafe para iPhone 17 Pro 
+
+[+] SUCESSO! Encontrados 454 modelos.
+
+[+] Planilha atualizada salva em:
+    C:\Users\carra\OneDrive\Área de Trabalho\historico_iphone_paraguai.csv
+[*] Preparando envio de e-mail para: carragal@hotmail.com via smtp.gmail.com...
+[+] E-mail enviado com sucesso para carragal@hotmail.com!

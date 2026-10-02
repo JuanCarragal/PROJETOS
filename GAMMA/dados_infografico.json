@@ -1,0 +1,372 @@
+{
+  "data_extracao": "2026-10-02 09:00",
+  "total_ofertas": 391,
+  "menor_preco_256": 6547.96,
+  "media_preco_256": 6812.445841584159,
+  "loja_campea": "Best Shop Paraguai",
+  "ranking_lojas": [
+    {
+      "Loja": "Best Shop Paraguai",
+      "min": 6547.96,
+      "mean": 6631.639999999999,
+      "count": 3
+    },
+    {
+      "Loja": "MultiPass",
+      "min": 6547.96,
+      "mean": 6547.96,
+      "count": 3
+    },
+    {
+      "Loja": "Star Games",
+      "min": 6547.96,
+      "mean": 6819.919999999999,
+      "count": 3
+    },
+    {
+      "Loja": "One Click",
+      "min": 6547.96,
+      "mean": 6547.96,
+      "count": 2
+    },
+    {
+      "Loja": "Twin Shop",
+      "min": 6547.96,
+      "mean": 6556.178571428572,
+      "count": 7
+    },
+    {
+      "Loja": "Shopping China",
+      "min": 6563.65,
+      "mean": 6664.98125,
+      "count": 8
+    },
+    {
+      "Loja": "Cell World",
+      "min": 6563.65,
+      "mean": 7583.487499999999,
+      "count": 4
+    },
+    {
+      "Loja": "Atacado Connect",
+      "min": 6563.65,
+      "mean": 6663.891666666666,
+      "count": 6
+    },
+    {
+      "Loja": "Swap Store",
+      "min": 6563.65,
+      "mean": 6700.9375,
+      "count": 4
+    },
+    {
+      "Loja": "Mario Cell",
+      "min": 6605.49,
+      "mean": 6640.7925,
+      "count": 4
+    },
+    {
+      "Loja": "Prime Shop",
+      "min": 6605.49,
+      "mean": 6605.49,
+      "count": 1
+    },
+    {
+      "Loja": "Star Company",
+      "min": 6605.49,
+      "mean": 6605.490000000001,
+      "count": 3
+    },
+    {
+      "Loja": "Mestre",
+      "min": 6605.49,
+      "mean": 6605.490000000001,
+      "count": 3
+    },
+    {
+      "Loja": "Roma Shopping",
+      "min": 6615.95,
+      "mean": 6699.63,
+      "count": 5
+    },
+    {
+      "Loja": "Topdek Informática",
+      "min": 6615.95,
+      "mean": 6624.666666666667,
+      "count": 3
+    },
+    {
+      "Loja": "Avanza",
+      "min": 6652.82,
+      "mean": 6993.993333333333,
+      "count": 3
+    },
+    {
+      "Loja": "Orbe Import",
+      "min": 6668.25,
+      "mean": 6685.683333333333,
+      "count": 3
+    },
+    {
+      "Loja": "Casa Americana",
+      "min": 6693.93,
+      "mean": 6693.93,
+      "count": 2
+    },
+    {
+      "Loja": "LG Importados",
+      "min": 6694.4,
+      "mean": 6711.833333333333,
+      "count": 3
+    },
+    {
+      "Loja": "Alborada",
+      "min": 6694.4,
+      "mean": 6868.733333333333,
+      "count": 3
+    },
+    {
+      "Loja": "Vertex",
+      "min": 6746.7,
+      "mean": 6746.7,
+      "count": 3
+    },
+    {
+      "Loja": "Flytec Computers",
+      "min": 6772.85,
+      "mean": 6772.850000000001,
+      "count": 3
+    },
+    {
+      "Loja": "Super Games",
+      "min": 6793.77,
+      "mean": 6793.77,
+      "count": 2
+    },
+    {
+      "Loja": "Matrix Importados",
+      "min": 6799.0,
+      "mean": 6799.0,
+      "count": 1
+    },
+    {
+      "Loja": "Apex Company",
+      "min": 6825.15,
+      "mean": 6833.866666666666,
+      "count": 3
+    },
+    {
+      "Loja": "Empire Shop",
+      "min": 6903.6,
+      "mean": 7356.866666666666,
+      "count": 3
+    },
+    {
+      "Loja": "Ushuaia Center",
+      "min": 6955.9,
+      "mean": 6955.9,
+      "count": 1
+    },
+    {
+      "Loja": "Atlantico Shop",
+      "min": 6955.9,
+      "mean": 6955.9,
+      "count": 1
+    },
+    {
+      "Loja": "Xcell",
+      "min": 6955.9,
+      "mean": 6955.899999999999,
+      "count": 6
+    },
+    {
+      "Loja": "Nissei",
+      "min": 6982.05,
+      "mean": 6982.05,
+      "count": 2
+    },
+    {
+      "Loja": "WB Shop",
+      "min": 7055.27,
+      "mean": 7055.27,
+      "count": 1
+    },
+    {
+      "Loja": "Mundo do Celular",
+      "min": 7426.6,
+      "mean": 7426.6,
+      "count": 1
+    },
+    {
+      "Loja": "HB Import",
+      "min": 9675.5,
+      "mean": 9675.5,
+      "count": 1
+    }
+  ],
+  "capacidades": [
+    {
+      "Modelo": "Celular Apple iPhone 17 Pro Max 256GB",
+      "min": 6547.96,
+      "mean": 6812.445841584159,
+      "count": 101
+    },
+    {
+      "Modelo": "Celular Apple iPhone 17 Pro Max 512GB",
+      "min": 7939.14,
+      "mean": 8159.731551724138,
+      "count": 58
+    },
+    {
+      "Modelo": "Celular Apple iPhone 17 Pro Max 1TB",
+      "min": 8723.64,
+      "mean": 9112.48,
+      "count": 25
+    },
+    {
+      "Modelo": "Celular Apple iPhone 17 Pro Max 2TB",
+      "min": 10261.26,
+      "mean": 10630.76,
+      "count": 18
+    }
+  ],
+  "lojas_notaveis": [
+    {
+      "Loja": "Best Shop Paraguai",
+      "min": 6547.96,
+      "mean": 6631.639999999999
+    },
+    {
+      "Loja": "MultiPass",
+      "min": 6547.96,
+      "mean": 6547.96
+    },
+    {
+      "Loja": "Star Games",
+      "min": 6547.96,
+      "mean": 6819.919999999999
+    },
+    {
+      "Loja": "One Click",
+      "min": 6547.96,
+      "mean": 6547.96
+    },
+    {
+      "Loja": "Twin Shop",
+      "min": 6547.96,
+      "mean": 6556.178571428572
+    },
+    {
+      "Loja": "Shopping China",
+      "min": 6563.65,
+      "mean": 6664.98125
+    },
+    {
+      "Loja": "Atacado Connect",
+      "min": 6563.65,
+      "mean": 6663.891666666666
+    },
+    {
+      "Loja": "Mario Cell",
+      "min": 6605.49,
+      "mean": 6640.7925
+    },
+    {
+      "Loja": "Nissei",
+      "min": 6982.05,
+      "mean": 6982.05
+    }
+  ],
+  "ofertas_destaque": [
+    {
+      "Loja": "One Click",
+      "Variante": "Apple iPhone 17 Pro Max 256GB A3257 LL Tela Super Retina XDR 6.9 / Cam Tripla 48+48+48MP/18MP Center Stage / Ios 26 - Deep Blue",
+      "Preco_Num": 6547.96,
+      "Preco_BRL": "6.547,96"
+    },
+    {
+      "Loja": "One Click",
+      "Variante": "Apple iPhone 17 Pro Max 256GB A3257 LL Tela Super Retina XDR 6.9 / Cam Tripla 48+48+48MP/18MP Center Stage / Ios 26 - Cosmic Orange",
+      "Preco_Num": 6547.96,
+      "Preco_BRL": "6.547,96"
+    },
+    {
+      "Loja": "Star Games",
+      "Variante": "iPhone 17 Pro Max 256GB Blue A3257",
+      "Preco_Num": 6547.96,
+      "Preco_BRL": "6.547,96"
+    },
+    {
+      "Loja": "MultiPass",
+      "Variante": "Celular Apple iPhone 17 Pro Max 256GB Deep Blue LL Lacrado Esim",
+      "Preco_Num": 6547.96,
+      "Preco_BRL": "6.547,96"
+    },
+    {
+      "Loja": "MultiPass",
+      "Variante": "Celular Apple iPhone 17 Pro Max 256GB Cosmic Orange LL Lacrado Esim",
+      "Preco_Num": 6547.96,
+      "Preco_BRL": "6.547,96"
+    },
+    {
+      "Loja": "MultiPass",
+      "Variante": "Celular Apple iPhone 17 Pro Max 256GB Silver LL Lacrado Esim",
+      "Preco_Num": 6547.96,
+      "Preco_BRL": "6.547,96"
+    },
+    {
+      "Loja": "Twin Shop",
+      "Variante": "Apple iPhone 17 Pro Max 256GB - Orange MFXH4LL (Esim)",
+      "Preco_Num": 6547.96,
+      "Preco_BRL": "6.547,96"
+    },
+    {
+      "Loja": "Twin Shop",
+      "Variante": "Apple iPhone 17 Pro Max 256GB - Deep Blue MFXJ4LL (Esim)",
+      "Preco_Num": 6547.96,
+      "Preco_BRL": "6.547,96"
+    },
+    {
+      "Loja": "Best Shop Paraguai",
+      "Variante": "iPhone 17 Pro Max 256GB A3257 LL/A Esim Cosmic Orange",
+      "Preco_Num": 6547.96,
+      "Preco_BRL": "6.547,96"
+    },
+    {
+      "Loja": "Best Shop Paraguai",
+      "Variante": "iPhone 17 Pro Max 256GB A3257 LL/A Esim Deep Blue",
+      "Preco_Num": 6547.96,
+      "Preco_BRL": "6.547,96"
+    },
+    {
+      "Loja": "Twin Shop",
+      "Variante": "Apple iPhone 17 Pro Max 256GB - Silver MFYM4BE (Nano - Esim) Anatel",
+      "Preco_Num": 6547.96,
+      "Preco_BRL": "6.547,96"
+    },
+    {
+      "Loja": "Twin Shop",
+      "Variante": "Apple iPhone 17 Pro Max 256GB - Deep Blue MFYP4BE (Nano - Esim) Anatel",
+      "Preco_Num": 6547.96,
+      "Preco_BRL": "6.547,96"
+    },
+    {
+      "Loja": "Twin Shop",
+      "Variante": "Apple iPhone 17 Pro Max 256GB - Cosmic Orange MFYN4BE (Nano - Esim) Anatel",
+      "Preco_Num": 6547.96,
+      "Preco_BRL": "6.547,96"
+    },
+    {
+      "Loja": "Twin Shop",
+      "Variante": "Apple iPhone 17 Pro Max 256GB - Silver MFXG4LL (Esim)",
+      "Preco_Num": 6547.96,
+      "Preco_BRL": "6.547,96"
+    },
+    {
+      "Loja": "Shopping China",
+      "Variante": "Celular Apple iPhone 17 Pro Max A3257 MFXJ4LL/A 256GB Deep Blue",
+      "Preco_Num": 6563.65,
+      "Preco_BRL": "6.563,65"
+    }
+  ]
+}
