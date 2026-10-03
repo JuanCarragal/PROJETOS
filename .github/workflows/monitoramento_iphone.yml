@@ -2,15 +2,20 @@ name: Monitoramento de Precos iPhone Paraguai
 
 on:
   schedule:
-    # Executa toda sexta-feira às 12:00 UTC (09:00 Horário de Brasília)
-    - cron: '0 12 * * 5'
+    # Executa todos os dias às 12:00 UTC (09:00 Horário de Brasília)
+    # Sexta-feira: gera pesquisa diária + Infográfico Executivo Semanal
+    # Demais dias: gera pesquisa diária e acumula histórico
+    - cron: '0 12 * * *'
   workflow_dispatch:
     inputs:
       forcar_sexta:
-        description: 'Forçar geração do infográfico'
+        description: 'Forçar geração do infográfico semanal'
         required: false
-        default: true
+        default: false
         type: boolean
+
+permissions:
+  contents: write
 
 jobs:
   executar-monitoramento:
@@ -19,6 +24,8 @@ jobs:
     steps:
       - name: Checkout do Repositório
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Configurar Python
         uses: actions/setup-python@v5
@@ -39,7 +46,11 @@ jobs:
           SMTP_SERVER: ${{ secrets.SMTP_SERVER }}
           SMTP_PORT: ${{ secrets.SMTP_PORT }}
         run: |
-          python GAMMA/pesquisa_iphone_paraguai.py --forcar-sexta
+          if [ "${{ github.event.inputs.forcar_sexta }}" = "true" ]; then
+            python GAMMA/pesquisa_iphone_paraguai.py --forcar-sexta
+          else
+            python GAMMA/pesquisa_iphone_paraguai.py
+          fi
 
       - name: Upload dos Relatórios como Artefatos (CSV + Infográfico HTML)
         uses: actions/upload-artifact@v4
@@ -49,15 +60,17 @@ jobs:
             GAMMA/historico_iphone_paraguai.csv
             GAMMA/infografico_precos_paraguai.html
             historico_iphone_paraguai.csv
+            infografico_precos_paraguai.html
+          if-no-files-found: ignore
 
       - name: Commit e Push das Atualizações de Histórico
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add GAMMA/historico_iphone_paraguai.csv GAMMA/infografico_precos_paraguai.html || true
+          git add GAMMA/historico_iphone_paraguai.csv GAMMA/infografico_precos_paraguai.html historico_iphone_paraguai.csv infografico_precos_paraguai.html || true
           if git diff --staged --quiet; then
             echo "Nenhuma alteração nos dados para commitar."
           else
-            git commit -m "chore(data): atualização automática do histórico e infográfico semanal [skip ci]"
-            git push
+            git commit -m "chore(data): atualização automática do histórico e infográfico [skip ci]"
+            git push origin main
           fi
