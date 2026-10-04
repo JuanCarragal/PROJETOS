@@ -2,10 +2,11 @@ name: Monitoramento de Precos iPhone Paraguai
 
 on:
   schedule:
-    # Executa todos os dias às 12:00 UTC (09:00 Horário de Brasília)
+    # Executa todos os dias às 11:15 UTC (08:15 Horário de Brasília)
+    # Minuto quebrado (:15) evita as filas de alta demanda dos horários cheios (:00) no GitHub Actions
     # Sexta-feira: gera pesquisa diária + Infográfico Executivo Semanal
     # Demais dias: gera pesquisa diária e acumula histórico
-    - cron: '0 12 * * *'
+    - cron: '15 11 * * *'
   workflow_dispatch:
     inputs:
       forcar_sexta:
