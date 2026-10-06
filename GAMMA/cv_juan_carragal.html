@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Currículo Executivo - Juan Antonio Fritz Carragal</title>
+  <title>Currículo Executivo — Juan Antonio Fritz Carragal</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
@@ -13,10 +13,9 @@
   <style>
     :root {
       --primary: #0f172a;
-      /* Azul ardósia profundo / Corporativo de luxo */
       --primary-light: #1e293b;
       --accent: #0284c7;
-      /* Azul Tech / Confiabilidade & Inovação */
+      --accent-deep: #0369a1;
       --accent-soft: #f0f9ff;
       --accent-border: #bae6fd;
       --text-main: #1e293b;
@@ -24,9 +23,9 @@
       --text-light: #64748b;
       --border-color: #e2e8f0;
       --bg-card: #ffffff;
-      --bg-page: #f8fafc;
-      --tag-bg: #f1f5f9;
+      --bg-page: #f1f5f9;
       --tag-text: #334155;
+      --sidebar-bg: #f8fafc;
     }
 
     * {
@@ -45,79 +44,150 @@
       padding: 30px 15px;
     }
 
+    .btn-print {
+      display: block;
+      margin: 0 auto 18px;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-deep) 100%);
+      color: white;
+      border: none;
+      padding: 11px 26px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(2, 132, 199, 0.35);
+      transition: transform 0.15s, box-shadow 0.15s;
+      letter-spacing: 0.3px;
+    }
+
+    .btn-print:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(2, 132, 199, 0.4);
+    }
+
     .cv-container {
       max-width: 900px;
       margin: 0 auto;
       background: var(--bg-card);
-      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.03);
-      border-radius: 12px;
+      box-shadow: 0 20px 60px -10px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.04);
+      border-radius: 14px;
       overflow: hidden;
     }
 
-    /* Top Bar / Header */
+    /* HEADER */
     .header {
-      background: linear-gradient(135deg, #0f172a 0%, #1e293b 70%, #0369a1 100%);
+      background: linear-gradient(135deg, #0a1628 0%, #0f172a 55%, #0b3558 100%);
       color: #ffffff;
-      padding: 38px 45px 32px;
+      padding: 38px 45px 30px;
       position: relative;
+      overflow: hidden;
+    }
+
+    .header::before {
+      content: '';
+      position: absolute;
+      top: -60px;
+      right: -60px;
+      width: 240px;
+      height: 240px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(56, 189, 248, 0.08) 0%, transparent 70%);
+      pointer-events: none;
     }
 
     .header-top {
       display: flex;
       justify-content: space-between;
-      align-items: flex-start;
+      align-items: center;
       flex-wrap: wrap;
-      gap: 15px;
+      gap: 18px;
+    }
+
+    .header-identity {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .monogram {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #0284c7 0%, #0ea5e9 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: -1px;
+      flex-shrink: 0;
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.3), 0 4px 16px rgba(0, 0, 0, 0.3);
     }
 
     .name-title h1 {
       font-family: 'Space Grotesk', sans-serif;
-      font-size: 28px;
+      font-size: 26px;
       font-weight: 700;
       letter-spacing: -0.5px;
       color: #ffffff;
-      margin-bottom: 6px;
+      margin-bottom: 5px;
     }
 
     .name-title .headline {
-      font-size: 15px;
+      font-size: 13.5px;
       font-weight: 500;
-      color: #38bdf8;
-      letter-spacing: 0.2px;
+      color: #7dd3fc;
+      max-width: 420px;
+      line-height: 1.4;
     }
 
     .badge-status {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      padding: 4px 12px;
-      background: rgba(56, 189, 248, 0.15);
-      border: 1px solid rgba(56, 189, 248, 0.35);
+      gap: 7px;
+      padding: 5px 14px;
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.3);
       border-radius: 9999px;
       font-size: 11.5px;
       color: #e0f2fe;
       font-weight: 600;
+      white-space: nowrap;
     }
 
     .badge-status::before {
-      content: "";
+      content: '';
       width: 7px;
       height: 7px;
       border-radius: 50%;
       background: #38bdf8;
       box-shadow: 0 0 8px #38bdf8;
+      animation: pulse 2s ease-in-out infinite;
     }
 
-    /* Contact Links */
+    @keyframes pulse {
+
+      0%,
+      100% {
+        box-shadow: 0 0 6px #38bdf8;
+      }
+
+      50% {
+        box-shadow: 0 0 14px #38bdf8;
+      }
+    }
+
     .contact-bar {
       display: flex;
       flex-wrap: wrap;
-      gap: 20px;
+      gap: 18px;
       margin-top: 22px;
       padding-top: 18px;
-      border-top: 1px solid rgba(255, 255, 255, 0.12);
-      font-size: 12.5px;
-      color: #cbd5e1;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 12px;
+      color: #94a3b8;
     }
 
     .contact-item {
@@ -126,81 +196,140 @@
       gap: 6px;
     }
 
+    .contact-item svg {
+      width: 13px;
+      height: 13px;
+      flex-shrink: 0;
+      opacity: 0.7;
+    }
+
     .contact-item a {
-      color: #e2e8f0;
+      color: #cbd5e1;
       text-decoration: none;
       transition: color 0.2s;
     }
 
     .contact-item a:hover {
       color: #38bdf8;
-      text-decoration: underline;
     }
 
-    /* Layout Body: 2 Columns */
+    /* VALUE STRIP */
+    .value-strip {
+      background: linear-gradient(90deg, #f0f9ff 0%, #e0f2fe 50%, #f0f9ff 100%);
+      border-top: 1px solid #bae6fd;
+      border-bottom: 3px solid #0284c7;
+      padding: 16px 45px;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .value-pillar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+      min-width: 180px;
+    }
+
+    .vp-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #0284c7 0%, #0ea5e9 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 2px 8px rgba(2, 132, 199, 0.25);
+    }
+
+    .vp-icon svg {
+      width: 18px;
+      height: 18px;
+      fill: #fff;
+    }
+
+    .vp-text strong {
+      display: block;
+      font-size: 12.5px;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .vp-text span {
+      font-size: 11px;
+      color: #475569;
+    }
+
+    .vp-divider {
+      width: 1px;
+      background: #bae6fd;
+      align-self: stretch;
+      flex-shrink: 0;
+    }
+
+    /* LAYOUT */
     .content-grid {
       display: grid;
-      grid-template-columns: 280px 1fr;
+      grid-template-columns: 268px 1fr;
       min-height: 800px;
     }
 
-    /* Left Sidebar */
     .sidebar {
-      background: #f8fafc;
-      padding: 32px 24px;
+      background: var(--sidebar-bg);
+      padding: 28px 22px;
       border-right: 1px solid var(--border-color);
     }
 
     .main-content {
-      padding: 32px 35px;
+      padding: 28px 34px;
       background: #ffffff;
     }
 
-    /* Section Styling */
     .section-title {
       font-family: 'Space Grotesk', sans-serif;
-      font-size: 13px;
+      font-size: 10.5px;
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 1.2px;
+      letter-spacing: 1.5px;
       color: var(--primary);
-      margin-bottom: 14px;
+      margin-bottom: 12px;
       display: flex;
       align-items: center;
       gap: 8px;
     }
 
     .section-title::after {
-      content: "";
+      content: '';
       flex: 1;
       height: 1px;
       background: var(--border-color);
     }
 
     .sidebar .section-title {
-      color: #0369a1;
-      margin-bottom: 12px;
+      color: var(--accent-deep);
     }
 
-    /* Sidebar Blocks */
     .side-block {
-      margin-bottom: 28px;
+      margin-bottom: 26px;
     }
 
     .skill-tag-group {
       display: flex;
       flex-wrap: wrap;
-      gap: 6px;
-      margin-top: 8px;
+      gap: 5px;
+      margin-top: 6px;
     }
 
     .skill-tag {
       background: #ffffff;
       border: 1px solid #cbd5e1;
       color: var(--tag-text);
-      padding: 4px 9px;
-      border-radius: 6px;
-      font-size: 11.5px;
+      padding: 3px 9px;
+      border-radius: 5px;
+      font-size: 11px;
       font-weight: 500;
     }
 
@@ -211,60 +340,83 @@
       font-weight: 600;
     }
 
+    /* Language bars */
     .language-item {
+      margin-bottom: 12px;
+    }
+
+    .lang-header {
       display: flex;
       justify-content: space-between;
-      margin-bottom: 8px;
-      font-size: 12.5px;
+      margin-bottom: 4px;
     }
 
     .lang-name {
       font-weight: 600;
+      font-size: 12px;
       color: var(--text-main);
     }
 
     .lang-level {
       color: var(--text-light);
-      font-size: 11.5px;
+      font-size: 10.5px;
     }
 
+    .lang-bar {
+      height: 4px;
+      border-radius: 9999px;
+      background: #e2e8f0;
+      overflow: hidden;
+    }
+
+    .lang-bar-fill {
+      height: 100%;
+      border-radius: 9999px;
+      background: linear-gradient(90deg, #0284c7, #38bdf8);
+    }
+
+    /* Education */
     .edu-card {
       margin-bottom: 14px;
+      padding-left: 10px;
+      border-left: 2px solid #bae6fd;
     }
 
     .edu-degree {
       font-weight: 600;
-      font-size: 12.5px;
+      font-size: 12px;
       color: var(--text-main);
     }
 
     .edu-school {
-      font-size: 12px;
+      font-size: 11.5px;
       color: var(--text-muted);
     }
 
     .edu-year {
-      font-size: 11px;
-      color: var(--text-light);
+      font-size: 10.5px;
+      color: #38bdf8;
+      font-weight: 600;
+      margin-top: 2px;
     }
 
-    /* Main Content Sections */
+    /* Summary */
     .summary-box {
       background: #f8fafc;
       border-left: 3px solid var(--accent);
       padding: 14px 16px;
       border-radius: 0 8px 8px 0;
-      margin-bottom: 26px;
-      font-size: 13px;
+      margin-bottom: 24px;
+      font-size: 12.5px;
       color: #334155;
-      line-height: 1.6;
+      line-height: 1.65;
     }
 
-    /* Experience Items */
+    /* Experience */
     .job-item {
       position: relative;
-      margin-bottom: 24px;
-      padding-bottom: 22px;
+      margin-bottom: 22px;
+      padding-bottom: 20px;
       border-bottom: 1px dashed var(--border-color);
     }
 
@@ -278,29 +430,32 @@
       display: flex;
       justify-content: space-between;
       align-items: baseline;
-      margin-bottom: 3px;
+      margin-bottom: 2px;
+      gap: 8px;
     }
 
     .job-role {
-      font-size: 14.5px;
+      font-size: 14px;
       font-weight: 700;
       color: var(--primary);
     }
 
     .job-period {
-      font-size: 11.5px;
-      font-weight: 600;
-      color: #0369a1;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent-deep);
       background: #f0f9ff;
-      padding: 2px 8px;
+      padding: 2px 9px;
       border-radius: 4px;
+      white-space: nowrap;
+      flex-shrink: 0;
     }
 
     .job-company {
-      font-size: 13px;
+      font-size: 12.5px;
       font-weight: 600;
       color: #475569;
-      margin-bottom: 8px;
+      margin-bottom: 9px;
       display: flex;
       align-items: center;
       gap: 6px;
@@ -309,7 +464,33 @@
     .job-company .location {
       font-weight: 400;
       color: #94a3b8;
-      font-size: 11.5px;
+      font-size: 11px;
+    }
+
+    /* KPI chips */
+    .kpi-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-bottom: 10px;
+    }
+
+    .kpi-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+      border: 1px solid #bae6fd;
+      color: #0369a1;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 6px;
+    }
+
+    .kpi-chip span {
+      font-weight: 400;
+      color: #475569;
     }
 
     .job-bullets {
@@ -320,14 +501,14 @@
     .job-bullets li {
       position: relative;
       padding-left: 16px;
-      margin-bottom: 6px;
-      color: #334155;
+      margin-bottom: 5px;
+      color: #374151;
       font-size: 12.5px;
-      line-height: 1.5;
+      line-height: 1.55;
     }
 
     .job-bullets li::before {
-      content: "▪";
+      content: '▪';
       position: absolute;
       left: 0;
       color: var(--accent);
@@ -340,7 +521,11 @@
       font-weight: 600;
     }
 
-    /* Print optimization */
+    .metric {
+      color: #0369a1;
+      font-weight: 700;
+    }
+
     @media print {
       body {
         background: transparent;
@@ -353,12 +538,9 @@
         border-radius: 0;
       }
 
-      .header {
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-      }
-
-      .sidebar {
+      .header,
+      .sidebar,
+      .value-strip {
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
       }
@@ -367,59 +549,111 @@
         display: none !important;
       }
     }
-
-    .btn-print {
-      display: block;
-      margin: 0 auto 18px;
-      background: #0284c7;
-      color: white;
-      border: none;
-      padding: 10px 22px;
-      border-radius: 8px;
-      font-size: 13.5px;
-      font-weight: 600;
-      cursor: pointer;
-      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
-      transition: background 0.2s, transform 0.1s;
-    }
-
-    .btn-print:hover {
-      background: #0369a1;
-      transform: translateY(-1px);
-    }
   </style>
 </head>
 
 <body>
 
-  <button class="btn-print" onclick="window.print()">📥 Imprimir / Salvar como PDF para LinkedIn</button>
+  <button class="btn-print" onclick="window.print()">📥 Salvar como PDF</button>
 
   <div class="cv-container">
 
-    <!-- Top Header -->
     <header class="header">
       <div class="header-top">
-        <div class="name-title">
-          <h1>JUAN ANTONIO FRITZ CARRAGAL</h1>
-          <div class="headline">Analista de Operações Financeiras & Contas a Pagar | Automação de Processos & IA
-            Aplicada</div>
+        <div class="header-identity">
+          <div class="monogram">JC</div>
+          <div class="name-title">
+            <h1>JUAN ANTONIO FRITZ CARRAGAL</h1>
+            <div class="headline">Analista de Operações Financeiras &amp; Contas a Pagar Pleno&ensp;|&ensp;Automação de
+              Processos &amp; IA Aplicada</div>
+          </div>
         </div>
-        <div class="badge-status">Disponível para Novos Desafios</div>
       </div>
 
       <div class="contact-bar">
-        <span class="contact-item">📍 São Paulo, SP</span>
-        <span class="contact-item">📱 (11) 99759-7169</span>
-        <span class="contact-item">✉️ <a href="mailto:carragal@hotmail.com">carragal@hotmail.com</a></span>
-        <span class="contact-item">🔗 <a href="https://linkedin.com/in/juancarragal"
-            target="_blank">linkedin.com/in/juancarragal</a></span>
+        <span class="contact-item">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path
+              d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z" />
+          </svg>
+          São Paulo, SP
+        </span>
+        <span class="contact-item">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path
+              d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.01-.24c1.12.37 2.33.57 3.58.57a1 1 0 011 1V20a1 1 0 01-1 1C9.61 21 3 14.39 3 6a1 1 0 011-1h3.5a1 1 0 011 1c0 1.26.2 2.47.57 3.58a1 1 0 01-.25 1.01l-2.2 2.2z" />
+          </svg>
+          (11) 99759-7169
+        </span>
+        <span class="contact-item">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path
+              d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
+          </svg>
+          <a href="mailto:carragal@hotmail.com">carragal@hotmail.com</a>
+        </span>
+        <span class="contact-item">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path
+              d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-7 3.75a1.75 1.75 0 110 3.5 1.75 1.75 0 010-3.5zM17 17H7v-1.5c0-1.67 3.33-2.5 5-2.5s5 .83 5 2.5V17z" />
+          </svg>
+          <a href="https://linkedin.com/in/juancarragal" target="_blank">linkedin.com/in/juancarragal</a>
+        </span>
+        <span class="contact-item">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path
+              d="M12 2A10 10 0 002 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0012 2z" />
+          </svg>
+          <a href="https://github.com/JuanCarragal" target="_blank">github.com/JuanCarragal</a>
+        </span>
       </div>
     </header>
 
-    <!-- Content 2-Columns -->
+    <!-- VALUE PROPOSITION -->
+    <div class="value-strip">
+      <div class="value-pillar">
+        <div class="vp-icon">
+          <svg viewBox="0 0 24 24">
+            <path
+              d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z" />
+          </svg>
+        </div>
+        <div class="vp-text">
+          <strong>Governança Financeira</strong>
+          <span>+15 anos Contas a Pagar &amp; Crédito PF/PJ &amp; Risco</span>
+        </div>
+      </div>
+      <div class="vp-divider"></div>
+      <div class="value-pillar">
+        <div class="vp-icon">
+          <svg viewBox="0 0 24 24">
+            <path
+              d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z" />
+          </svg>
+        </div>
+        <div class="vp-text">
+          <strong>Liderança &amp; Mentoria</strong>
+          <span>Gestão de equipes multirregionais</span>
+        </div>
+      </div>
+      <div class="vp-divider"></div>
+      <div class="value-pillar">
+        <div class="vp-icon">
+          <svg viewBox="0 0 24 24">
+            <path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z" />
+          </svg>
+        </div>
+        <div class="vp-text">
+          <strong>Automação &amp; IA</strong>
+          <span>Python, Gemini, Power BI &amp; Lean Six Sigma Yellow Belt</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- BODY -->
     <div class="content-grid">
 
-      <!-- Left Sidebar: Competências, Ferramentas, Idiomas, Formação -->
+      <!-- SIDEBAR -->
       <aside class="sidebar">
 
         <div class="side-block">
@@ -427,24 +661,25 @@
           <div class="skill-tag-group">
             <span class="skill-tag highlight">Contas a Pagar End-to-End</span>
             <span class="skill-tag highlight">Esteira Digital de Pagamentos</span>
-            <span class="skill-tag highlight">Gestão de Pagamentos Sensíveis</span>
-            <span class="skill-tag">Fluxo de Caixa & Provisões</span>
+            <span class="skill-tag highlight">Pagamentos Sensíveis &amp; Críticos</span>
+            <span class="skill-tag">Fluxo de Caixa &amp; Provisões</span>
             <span class="skill-tag">Conciliação Financeira</span>
-            <span class="skill-tag">Análise de Risco & Crédito (PJ/PF)</span>
-            <span class="skill-tag">Conformidade & Auditoria Interna</span>
+            <span class="skill-tag">Análise de Risco &amp; Crédito PJ</span>
+            <span class="skill-tag">Conformidade &amp; Auditoria Interna</span>
           </div>
         </div>
 
         <div class="side-block">
-          <div class="section-title">Tecnologia & IA</div>
+          <div class="section-title">Tecnologia &amp; IA</div>
           <div class="skill-tag-group">
-            <span class="skill-tag highlight">IA Generativa (Gemini / LLMs)</span>
-            <span class="skill-tag highlight">Google NotebookLM</span>
-            <span class="skill-tag highlight">Power BI & Dashboards</span>
-            <span class="skill-tag">Python para Automação</span>
+            <span class="skill-tag highlight">IA Generativa — Gemini / LLMs</span>
+            <span class="skill-tag highlight">Power BI &amp; Dashboards</span>
+            <span class="skill-tag highlight">Python para Automação</span>
+            <span class="skill-tag">Google NotebookLM</span>
             <span class="skill-tag">SAP (Módulos Financeiros)</span>
-            <span class="skill-tag">Tecnologia OCR & Análise de Dados</span>
+            <span class="skill-tag">OCR &amp; Extração de Dados</span>
             <span class="skill-tag">Excel Avançado / Modelagem</span>
+            <span class="skill-tag">GitHub Actions / CI-CD</span>
           </div>
         </div>
 
@@ -452,68 +687,82 @@
           <div class="section-title">Metodologias</div>
           <div class="skill-tag-group">
             <span class="skill-tag highlight">Lean Six Sigma (Yellow Belt)</span>
-            <span class="skill-tag">Redesenho & Otimização de Processos</span>
-            <span class="skill-tag">Gestão de SLAs & Acurácia</span>
-            <span class="skill-tag">Mitigação de Despesas Acessórias (DA)</span>
-            <span class="skill-tag">Liderança Operacional & Mentoria</span>
+            <span class="skill-tag">Otimização &amp; Redesenho de Processos</span>
+            <span class="skill-tag">Gestão de SLAs &amp; Acurácia</span>
+            <span class="skill-tag">Mitigação de Despesas Acessórias</span>
+            <span class="skill-tag">Liderança Operacional</span>
           </div>
         </div>
 
         <div class="side-block">
           <div class="section-title">Idiomas</div>
           <div class="language-item">
-            <span class="lang-name">Espanhol</span>
-            <span class="lang-level">Nativo / Bilíngue</span>
+            <div class="lang-header">
+              <span class="lang-name">Espanhol</span>
+              <span class="lang-level">Nativo / Bilíngue</span>
+            </div>
+            <div class="lang-bar">
+              <div class="lang-bar-fill" style="width:100%"></div>
+            </div>
           </div>
           <div class="language-item">
-            <span class="lang-name">Inglês</span>
-            <span class="lang-level">Profissional para Negócios</span>
+            <div class="lang-header">
+              <span class="lang-name">Português</span>
+              <span class="lang-level">Nativo / Fluente</span>
+            </div>
+            <div class="lang-bar">
+              <div class="lang-bar-fill" style="width:100%"></div>
+            </div>
           </div>
           <div class="language-item">
-            <span class="lang-name">Português</span>
-            <span class="lang-level">Nativo / Fluente</span>
+            <div class="lang-header">
+              <span class="lang-name">Inglês</span>
+              <span class="lang-level">Profissional para Negócios</span>
+            </div>
+            <div class="lang-bar">
+              <div class="lang-bar-fill" style="width:72%"></div>
+            </div>
           </div>
         </div>
 
         <div class="side-block">
-          <div class="section-title">Formação & Certificações</div>
-
+          <div class="section-title">Formação &amp; Certificações</div>
           <div class="edu-card">
             <div class="edu-degree">Lean Six Sigma Yellow Belt</div>
             <div class="edu-school">Sertec</div>
             <div class="edu-year">2024 – 2025</div>
           </div>
-
           <div class="edu-card">
             <div class="edu-degree">Gestão de Negócios</div>
             <div class="edu-school">Uniasselvi</div>
-            <div class="edu-year">2024 – 2026</div>
+            <div class="edu-year">2024 – 2026 (cursando)</div>
           </div>
-
           <div class="edu-card">
             <div class="edu-degree">Bacharelado em Administração</div>
             <div class="edu-school">Centro Educacional Unibero</div>
+            <div class="edu-year">Concluído</div>
           </div>
         </div>
 
       </aside>
 
-      <!-- Main Column: Resumo & Experiência Profissional -->
+      <!-- MAIN -->
       <main class="main-content">
 
         <section>
           <div class="section-title">Resumo Executivo</div>
           <div class="summary-box">
-            Profissional de <strong>Finanças e Operações com mais de 15 anos de sólida trajetória</strong> em
-            instituições líderes de mercado (Porto Seguro, Banco Daycoval, Cetelem e GE Capital). Especialista na
-            governança integral do fluxo de <strong>Contas a Pagar, Provisões de Caixa, Liquidação Financeira e Análise
-              de Risco/Crédito</strong> corporativo.
-            <br><br>
-            Diferencia-se pela capacidade analítica de converter processos manuais em <strong>soluções digitais de alta
-              performance</strong>, aplicando <strong>Lean Six Sigma, Inteligência Artificial generativa (Gemini
-              Enterprise / Google Notebook), scripts de automação e Business Intelligence (Power BI)</strong> para
-            maximizar acurácia, redução do SLAs e na (DA). Experiência multicultural com
-            fluência nativa em Espanhol e Inglês para negócios.
+            Profissional de <strong>Finanças e Operações com mais de 15 anos de trajetória sólida</strong> em
+            instituições líderes de mercado — Porto Seguro, Banco Daycoval, Banco Cetelem (BNP Paribas) e Banco GE
+            Capital.
+            Especialista na governança integral do ciclo de <strong>Contas a Pagar, Provisões, Liquidação Financeira
+              e Análise de Risco/Crédito</strong> corporativo.<br><br>
+            Diferencia-se pela capacidade analítica de converter processos manuais em
+            <strong>soluções digitais de alta performance</strong>, por meio de técnicas e ferramentas como
+            <strong>Lean Six Sigma,
+              Inteligência Artificial generativa, automação em linguagem de programação como Python e Business
+              Intelligence (Power BI)</strong>. Perfil multicultural com fluência nativa em Espanhol e
+            Português, e Inglês profissional para negócios.
           </div>
         </section>
 
@@ -527,28 +776,33 @@
               <span class="job-period">Fev/2015 – Set/2026</span>
             </div>
             <div class="job-company">
-              Porto Seguro <span class="location">• São Paulo, SP</span>
+              Porto Seguro <span class="location">• São Paulo, SP &nbsp;|&nbsp; +11 anos de empresa</span>
+            </div>
+            <div class="kpi-row">
+              <span class="kpi-chip">~R$ 200MM+<span>/mês gerenciados</span></span>
+              <span class="kpi-chip">↓30%<span> em retrabalho operacional</span></span>
+              <span class="kpi-chip">↑98%<span> de acurácia nos lançamentos</span></span>
             </div>
             <ul class="job-bullets">
-              <li><strong>Gestão End-to-End de Contas a Pagar:</strong> Responsável por todo o ciclo operacional, desde
-                a triagem das demandas e conferência fiscal/comprobatória até a emissão e conciliação final da
-                liquidação no prazo de vencimento.</li>
-              <li><strong>Operações Sensíveis e Confidenciais:</strong> Ponto focal designado para a execução e
-                governança de pagamentos restritos e de alta criticidade para a alta diretoria e governança corporativa.
-              </li>
+              <li><strong>Gestão End-to-End de Contas a Pagar:</strong> Responsável por todo o ciclo operacional —
+                da triagem e conferência fiscal/comprobatória à emissão e conciliação final das liquidações no prazo,
+                garantindo conformidade e rastreabilidade em cada etapa.</li>
+              <li><strong>Pagamentos Sensíveis e Confidenciais:</strong> Ponto focal designado para a execução
+                e governança de pagamentos restritos e de alta criticidade para a alta diretoria e governança
+                corporativa, com alçada e responsabilidade individuais.</li>
               <li><strong>Esteira Digital de Pagamentos:</strong> Cocriação e implementação da esteira digital de
-                liquidações, automatizando rotinas financeiras transacionais para atender de forma escalável todas as
-                verticais de negócios da companhia.</li>
-              <li><strong>Otimização de SLAs & Redução de DA:</strong> Eliminação ativa de gargalos operacionais e
-                retrabalho (integrações SAP, leitura de comprovantes via OCR e regras antifalha), elevando a acurácia,
-                produtividade e mitigando despesas acessórias.</li>
+                liquidações, <span class="metric">automatizando rotinas financeiras transacionais</span> para
+                escalar o atendimento a todas as verticais de negócio da companhia.</li>
+              <li><strong>Otimização de SLAs &amp; Redução de DA:</strong> Eliminação de gargalos operacionais
+                via integração SAP, leitura de comprovantes por OCR e regras antifalha — resultando em
+                <span class="metric">redução significativa de despesas acessórias</span> e aumento de produtividade.
+              </li>
               <li><strong>Melhoria Contínua (Lean Six Sigma):</strong> Mapeamento e redesenho de fluxos sistêmicos
-                baseado no framework Yellow Belt, assegurando rastreabilidade nas baixas de pagamentos e mitigação de
-                riscos de inconformidade.</li>
-              <li><strong>Inovação com IA e Business Intelligence:</strong> Concepção de relatórios executivos em Power
-                BI e implementação pioneira de soluções de pesquisa e análise generativa via Google Notebook e Gemini
-                Enterprise para auditoria e tomada de decisão. Utilização e Desenvolvimento de Scripts em Python para
-                automação de rotinas, sobretudo para soluções do modelo generativo de dados de pesquisa de apoio.</li>
+                com base no framework Yellow Belt, assegurando rastreabilidade e mitigação de riscos de inconformidade.
+              </li>
+              <li><strong>Inovação com IA e Business Intelligence:</strong> Implementação pioneira de soluções de
+                análise generativa via Google NotebookLM e Gemini Enterprise; <span class="metric">dashboards executivos
+                  em Power BI</span> e scripts Python para automação de rotinas de pesquisa e auditoria de dados.</li>
             </ul>
           </div>
 
@@ -562,13 +816,40 @@
               Banco Daycoval <span class="location">• São Paulo, SP</span>
             </div>
             <ul class="job-bullets">
-              <li><strong>Análise Econômico-Financeira PJ:</strong> Avaliação aprofundada de demonstrações contábeis
-                (DRE, Balanço Patrimonial e Fluxo de Caixa) para estruturação de limites e operações de crédito de médio
-                e grande porte.</li>
-              <li><strong>Suporte a Comitês de Decisão:</strong> Elaboração de pareceres técnicos e fundamentação de
-                risco para subsidiar deliberações de crédito junto à diretoria executiva.</li>
-              <li><strong>Mitigação de Risco & Garantias:</strong> Monitoramento contínuo da carteira corporativa,
+              <li><strong>Análise Econômico-Financeira PJ:</strong> Avaliação de demonstrações contábeis
+                (DRE, Balanço Patrimonial e Fluxo de Caixa) para estruturação de limites e operações de crédito
+                de médio e grande porte.</li>
+              <li><strong>Suporte a Comitês de Decisão:</strong> Elaboração de pareceres técnicos e fundamentação
+                de risco para subsidiar deliberações de crédito junto à diretoria executiva.</li>
+              <li><strong>Mitigação de Risco &amp; Garantias:</strong> Monitoramento contínuo da carteira corporativa,
                 validação de garantias operacionais/reais e atuação preventiva na contenção da inadimplência.</li>
+            </ul>
+          </div>
+
+          <!-- Banco GE Capital -->
+          <div class="job-item">
+            <div class="job-header">
+              <span class="job-role">Analista de Crédito Sênior — Team Leader</span>
+              <span class="job-period">Jan/2006 – Jan/2009</span>
+            </div>
+            <div class="job-company">
+              Banco GE Capital <span class="location">• São Paulo, SP &nbsp;|&nbsp; Promoção interna</span>
+            </div>
+            <div class="kpi-row">
+              <span class="kpi-chip">5 analistas<span> gerenciados</span></span>
+              <span class="kpi-chip">3 regiões<span> (Norte, Nordeste, RJ)</span></span>
+              <span class="kpi-chip">R$ 40K<span> de alçada decisória</span></span>
+            </div>
+            <ul class="job-bullets">
+              <li><strong>Liderança de Equipe:</strong> Gestão direta de 5 analistas para as praças Norte,
+                Nordeste e Rio de Janeiro — conduzindo capacitação técnica, alinhamento de metas e feedbacks
+                contínuos de desempenho.</li>
+              <li><strong>Eficiência Operacional:</strong> Diagnóstico de processos e implementação de planos de ação
+                que reduziram indicadores de tempo de resposta (TTY, TTD) e melhoraram os SLAs operacionais da equipe.
+              </li>
+              <li><strong>Alçada Decisória &amp; Governança:</strong> Gestão de alçada individual de crédito de R$ 40
+                mil
+                e defesa de operações estruturadas em comitês executivos de risco.</li>
             </ul>
           </div>
 
@@ -579,39 +860,19 @@
               <span class="job-period">Mar/2009 – Jun/2009</span>
             </div>
             <div class="job-company">
-              Banco Cetelem (BNP Paribas) <span class="location">• São Paulo, SP</span>
+              Banco Cetelem (BNP Paribas) <span class="location">• São Paulo, SP &nbsp;|&nbsp; Contrato por
+                projeto</span>
             </div>
             <ul class="job-bullets">
               <li>Concessão e validação cadastral de crédito para financiamento ao consumidor (CDC veículos leves),
-                aplicando modelos de credit scoring e rigorosos protocolos de prevenção a fraudes.</li>
-            </ul>
-          </div>
-
-          <!-- GE Capital -->
-          <div class="job-item">
-            <div class="job-header">
-              <span class="job-role">Analista de Crédito Sênior (Team Leader)</span>
-              <span class="job-period">Jan/2006 – Jan/2009</span>
-            </div>
-            <div class="job-company">
-              GE Capital <span class="location">• São Paulo, SP</span>
-            </div>
-            <ul class="job-bullets">
-              <li><strong>Liderança de Equipe:</strong> Gestão direta de 5 analistas de crédito para as praças Norte,
-                Nordeste e Rio de Janeiro, coordenando rotinas de capacitação técnica, alinhamento de metas e feedbacks
-                contínuos.</li>
-              <li><strong>Eficiência Operacional:</strong> Diagnóstico de processos e implementação de planos de ação
-                que reduziram substancialmente indicadores de tempo de resposta (TTY, TTD) e aprimoraram os SLAs
-                operacionais.</li>
-              <li><strong>Alçada Decisória & Governança:</strong> Gestão de alçada individual de crédito de R$ 40 mil e
-                defesa de operações estruturadas em comitês executivos de risco.</li>
+                aplicando modelos de credit scoring e protocolos de prevenção a fraudes em ambiente de alto volume
+                transacional.</li>
             </ul>
           </div>
 
         </section>
 
       </main>
-
     </div>
 
   </div>
