@@ -12,6 +12,11 @@ on:
         required: false
         default: false
         type: boolean
+      teste_email:
+        description: 'Enviar somente um e-mail de teste usando os secrets do repositorio'
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: write
@@ -50,6 +55,15 @@ jobs:
         run: |
           MAX_TENTATIVAS=3
           FORCAR_SEXTA="${{ github.event.inputs.forcar_sexta }}"
+          TESTE_EMAIL="${{ github.event.inputs.teste_email }}"
+
+          if [ "$TESTE_EMAIL" = "true" ]; then
+            set +e
+            python GAMMA/pesquisa_iphone_paraguai.py --teste-email 2>&1 | tee -a GAMMA/execucao_log.txt
+            EXIT_CODE=${PIPESTATUS[0]}
+            set -e
+            exit "$EXIT_CODE"
+          fi
 
           for tentativa in $(seq 1 $MAX_TENTATIVAS); do
             echo "========================================="

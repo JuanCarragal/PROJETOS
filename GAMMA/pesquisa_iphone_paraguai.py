@@ -354,6 +354,40 @@ def enviar_email_erro(detalhes):
         print(f"[X] Não foi possível enviar o alerta de erro: {e}")
         return False
 
+def enviar_email_teste():
+    if not EMAIL_REMETENTE or not EMAIL_SENHA:
+        print("[X] Teste não enviado: EMAIL_REMETENTE ou EMAIL_SENHA não configurados.")
+        return False
+
+    msg = MIMEMultipart()
+    msg["From"] = EMAIL_REMETENTE
+    msg["To"] = EMAIL_DESTINO
+    msg["Subject"] = f"[TESTE] Monitoramento iPhone Paraguai - {datetime.now().strftime('%d/%m/%Y %H:%M')}"
+    msg.attach(MIMEText(
+        "Teste de envio executado pelo GitHub Actions.\n"
+        "Esta mensagem confirma a conexão SMTP e não representa um relatório de preços.",
+        "plain",
+        "utf-8",
+    ))
+
+    try:
+        if SMTP_PORT == 465:
+            with smtplib.SMTP_SSL(SMTP_SERVER, SMTP_PORT, timeout=20) as servidor:
+                servidor.login(EMAIL_REMETENTE, EMAIL_SENHA)
+                servidor.send_message(msg)
+        else:
+            with smtplib.SMTP(SMTP_SERVER, SMTP_PORT, timeout=20) as servidor:
+                servidor.ehlo()
+                servidor.starttls()
+                servidor.ehlo()
+                servidor.login(EMAIL_REMETENTE, EMAIL_SENHA)
+                servidor.send_message(msg)
+        print(f"[+] E-mail de teste enviado para {EMAIL_DESTINO}.")
+        return True
+    except Exception as e:
+        print(f"[X] Falha no teste SMTP: {type(e).__name__}: {e}")
+        return False
+
 def _reportar_excecao(tipo, valor, tb):
     detalhes = "".join(traceback.format_exception(tipo, valor, tb))
     enviar_email_erro(detalhes)
@@ -397,8 +431,12 @@ if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser(description="Monitor de Preços iPhone no Paraguai")
     parser.add_argument("--forcar-sexta", action="store_true", help="Força a geração do infográfico independente do dia")
+    parser.add_argument("--teste-email", action="store_true", help="Envia um e-mail de teste sem executar a pesquisa")
     parser.add_argument("--termo", default="iphone 17 pro max", help="Termo para pesquisa de preços")
     args = parser.parse_args()
+
+    if args.teste_email:
+        sys.exit(0 if enviar_email_teste() else 1)
 
     # Verifica se hoje é sexta-feira (4 = Friday) ou se a flag foi passada
     eh_sexta_feira = (datetime.now().weekday() == 4) or args.forcar_sexta
