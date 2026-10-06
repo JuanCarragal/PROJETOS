@@ -10,6 +10,59 @@ import json
 from datetime import datetime
 import pandas as pd
 
+def preparar_evolucao_dolar(df):
+  colunas_necessarias = {"Data", "Cotacao_USD_BRL", "Data_Cotacao_USD"}
+  if not colunas_necessarias.issubset(df.columns):
+    return {"labels": [], "valores": [], "datas_cotacao": [], "resumo": "Sem histórico cambial", "cor": "#38bdf8"}
+
+  datas_pesquisa = pd.to_datetime(df["Data"], errors="coerce").dt.normalize()
+  ultima_pesquisa = datas_pesquisa.max()
+  if pd.isna(ultima_pesquisa):
+    return {"labels": [], "valores": [], "datas_cotacao": [], "resumo": "Sem datas de pesquisa", "cor": "#38bdf8"}
+
+  dados = pd.DataFrame({
+    "data_pesquisa": datas_pesquisa,
+    "data_cotacao": pd.to_datetime(df["Data_Cotacao_USD"], errors="coerce"),
+    "valor": pd.to_numeric(df["Cotacao_USD_BRL"], errors="coerce"),
+  }).dropna()
+  if dados.empty:
+    return {"labels": [], "valores": [], "datas_cotacao": [], "resumo": "Sem cotações nesta semana", "cor": "#38bdf8"}
+
+  inicio_semana = ultima_pesquisa - pd.Timedelta(days=ultima_pesquisa.weekday())
+  dados = dados[
+    (dados["data_pesquisa"] >= inicio_semana) &
+    (dados["data_pesquisa"] <= ultima_pesquisa)
+  ]
+  if dados.empty:
+    return {"labels": [], "valores": [], "datas_cotacao": [], "resumo": "Sem cotações nesta semana", "cor": "#38bdf8"}
+
+  por_dia = (
+    dados.sort_values(["data_pesquisa", "data_cotacao"])
+    .groupby("data_pesquisa", as_index=False)
+    .last()
+    .sort_values("data_pesquisa")
+  )
+  valores = [round(float(valor), 4) for valor in por_dia["valor"]]
+  labels = [data.strftime("%d/%m") for data in por_dia["data_pesquisa"]]
+  datas_cotacao = [data.strftime("%d/%m/%Y") for data in por_dia["data_cotacao"]]
+
+  if len(valores) < 2:
+    resumo = f"1 cotação: R$ {valores[0]:.4f}".replace(".", ",")
+    cor = "#38bdf8"
+  else:
+    variacao = valores[-1] - valores[0]
+    percentual = (variacao / valores[0]) * 100 if valores[0] else 0
+    if variacao > 0:
+      direcao, cor = "Alta", "#f87171"
+    elif variacao < 0:
+      direcao, cor = "Queda", "#34d399"
+    else:
+      direcao, cor = "Estável", "#38bdf8"
+    resumo = f"{direcao}: R$ {abs(variacao):.4f} ({abs(percentual):.2f}%)"
+    resumo = resumo.replace(".", ",")
+
+  return {"labels": labels, "valores": valores, "datas_cotacao": datas_cotacao, "resumo": resumo, "cor": cor}
+
 def limpar_preco(val):
     if pd.isna(val):
         return None
@@ -30,6 +83,8 @@ def gerar_infografico_html(caminho_csv, caminho_saida_html):
     if len(df) == 0:
         print("[!] CSV está vazio.")
         return False
+
+    evolucao_dolar = preparar_evolucao_dolar(df)
 
     df["Preco_Num"] = df["Preco_BRL"].apply(limpar_preco)
     df_valid = df[df["Preco_Num"].notna() & (df["Loja"] != "?")].copy()
@@ -563,6 +618,19 @@ def gerar_infografico_html(caminho_csv, caminho_saida_html):
           <canvas id="capacidadesChart"></canvas>
         </div>
       </div>
+
+      <div class="chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">💵 Evolução do Dólar na Semana</div>
+            <div class="chart-desc">PTAX de venda do Banco Central; datas no detalhe são as referências efetivas</div>
+          </div>
+          <span class="chart-tag" style="color: {evolucao_dolar['cor']};">{evolucao_dolar['resumo']}</span>
+        </div>
+        <div class="chart-container">
+          <canvas id="evolucaoDolarChart"></canvas>
+        </div>
+      </div>
     </section>
 
     <section class="table-card">
@@ -747,6 +815,44 @@ def gerar_infografico_html(caminho_csv, caminho_saida_html):
             ticks: {{ callback: (v) => 'R$ ' + v }}
           }},
           x: {{ grid: {{ display: false }} }}
+        }}
+      }}
+    }});
+
+    // 5. Evolução semanal do dólar PTAX
+    new Chart(document.getElementById('evolucaoDolarChart').getContext('2d'), {{
+      type: 'line',
+      data: {{
+        labels: {json.dumps(evolucao_dolar['labels'], ensure_ascii=False)},
+        datasets: [{{
+          label: 'PTAX venda (R$/USD)',
+          data: {json.dumps(evolucao_dolar['valores'])},
+          borderColor: '{evolucao_dolar['cor']}',
+          backgroundColor: '{evolucao_dolar['cor']}33',
+          pointRadius: 4,
+          pointHoverRadius: 6,
+          tension: 0.25,
+          fill: true
+        }}]
+      }},
+      options: {{
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {{
+          legend: {{ position: 'top', labels: {{ boxWidth: 12 }} }},
+          tooltip: {{
+            callbacks: {{
+              label: (context) => ` R$ ${{context.parsed.y.toLocaleString('pt-BR', {{minimumFractionDigits: 4, maximumFractionDigits: 4}})}}`,
+              afterBody: (items) => `Referência PTAX (BCB): ${{{json.dumps(evolucao_dolar['datas_cotacao'], ensure_ascii=False)}[items[0].dataIndex]}}`
+            }}
+          }}
+        }},
+        scales: {{
+          y: {{
+            grid: {{ color: 'rgba(255, 255, 255, 0.05)' }},
+            ticks: {{ callback: (value) => 'R$ ' + Number(value).toLocaleString('pt-BR', {{minimumFractionDigits: 4, maximumFractionDigits: 4}}) }}
+          }},
+          x: {{ grid: {{ color: 'rgba(255, 255, 255, 0.03)' }} }}
         }}
       }}
     }});

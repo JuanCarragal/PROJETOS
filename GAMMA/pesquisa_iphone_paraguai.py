@@ -2,10 +2,16 @@
 import sys
 import os
 import re
+import traceback
+import json
+from datetime import datetime, timedelta
+from urllib.request import Request, urlopen
 from datetime import datetime
 import cloudscraper
-from bs4 import BeautifulSoup
+from openpyxl.utils import get_column_letter
+import mimetypes
 import pandas as pd
+from openpyxl.styles import Alignment, Font, PatternFill
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -24,14 +30,43 @@ if sys.platform.startswith("win"):
 # Configurações de E-mail
 EMAIL_REMETENTE = os.getenv("EMAIL_REMETENTE", "").strip()
 EMAIL_SENHA = os.getenv("EMAIL_SENHA", "").strip().replace(" ", "")
-EMAIL_DESTINO = os.getenv("EMAIL_DESTINO", "carragal@hotmail.com").strip()
+EMAIL_DESTINO = os.getenv("EMAIL_DESTINO", "").strip() or "carragal@hotmail.com"
 
 # Se o remetente for Gmail, assegura servidor e porta do Gmail por padrão
 default_server = "smtp.gmail.com" if "gmail.com" in EMAIL_REMETENTE.lower() else "smtp-mail.outlook.com"
 default_port = 465 if "gmail.com" in EMAIL_REMETENTE.lower() else 587
 
-SMTP_SERVER = os.getenv("SMTP_SERVER", default_server).strip()
-SMTP_PORT = int(os.getenv("SMTP_PORT", default_port))
+SMTP_SERVER = os.getenv("SMTP_SERVER", "").strip() or default_server
+SMTP_PORT = int(os.getenv("SMTP_PORT", "") or default_port)
+
+def obter_cotacao_dolar(data_referencia=None):
+    data_referencia = data_referencia or datetime.now().date()
+    base_url = "https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/odata/"
+
+    for dias_atras in range(11):
+        data_consulta = data_referencia - timedelta(days=dias_atras)
+        data_parametro = data_consulta.strftime("%m-%d-%Y")
+        url = (
+            f"{base_url}CotacaoDolarDia(dataCotacao=@dataCotacao)?"
+            f"@dataCotacao='{data_parametro}'&$top=100&$format=json"
+        )
+        try:
+            request = Request(url, headers={"User-Agent": "Mozilla/5.0"})
+            with urlopen(request, timeout=10) as resposta:
+                registros = json.load(resposta).get("value", [])
+        except Exception as e:
+            print(f"[!] Não foi possível consultar a cotação PTAX no BCB: {e}")
+            return None
+
+        if registros:
+            registro = max(registros, key=lambda item: item["dataHoraCotacao"])
+            return {
+                "valor": float(registro["cotacaoVenda"]),
+                "data": registro["dataHoraCotacao"][:10],
+            }
+
+    print("[!] Nenhuma cotação PTAX encontrada nos últimos 10 dias.")
+    return None
 
 def _criar_scraper():
     return cloudscraper.create_scraper(
@@ -124,9 +159,47 @@ def raspar_precos_paraguai(termo_busca="iphone 17 pro max"):
 
     except Exception as e:
         print(f"[X] Erro crítico no scraping: {e}")
-        return []
+        raise RuntimeError(f"Erro crítico no scraping: {e}") from e
 
-def enviar_relatorio_email(df, caminho_csv=None, anexos_extras=None):
+def salvar_relatorio_excel(df, caminho_xlsx, cotacao_dolar=None):
+    with pd.ExcelWriter(caminho_xlsx, engine="openpyxl") as writer:
+        df.to_excel(writer, index=False, sheet_name="Preços do dia", startrow=2)
+        planilha = writer.sheets["Preços do dia"]
+        ultima_coluna = get_column_letter(len(df.columns))
+        planilha.merge_cells(f"A1:{ultima_coluna}1")
+        celula_cotacao = planilha["A1"]
+        if cotacao_dolar:
+            valor_formatado = f"{cotacao_dolar['valor']:.4f}".replace(".", ",")
+            data_formatada = datetime.strptime(cotacao_dolar["data"], "%Y-%m-%d").strftime("%d/%m/%Y")
+            celula_cotacao.value = f"Dólar PTAX venda: R$ {valor_formatado} | Cotação de {data_formatada} | Banco Central do Brasil"
+        else:
+            celula_cotacao.value = "Dólar PTAX venda: indisponível | Banco Central do Brasil"
+        celula_cotacao.font = Font(bold=True, color="FFFFFF", size=12)
+        celula_cotacao.fill = PatternFill(fill_type="solid", fgColor="17324D")
+        celula_cotacao.alignment = Alignment(vertical="center", horizontal="left")
+        planilha.row_dimensions[1].height = 30
+        planilha.row_dimensions[2].height = 8
+        planilha.freeze_panes = "A4"
+        planilha.auto_filter.ref = f"A3:{ultima_coluna}{planilha.max_row}"
+
+        for celula in planilha[3]:
+            celula.font = Font(bold=True, color="FFFFFF")
+            celula.fill = PatternFill(fill_type="solid", fgColor="17324D")
+            celula.alignment = Alignment(vertical="center", wrap_text=True)
+        planilha.row_dimensions[3].height = 24
+
+        for indice_coluna, coluna in enumerate(planilha.columns, start=1):
+            largura = max(len(str(celula.value or "")) for celula in coluna)
+            planilha.column_dimensions[get_column_letter(indice_coluna)].width = min(max(largura + 2, 12), 42)
+            for celula in coluna[3:]:
+                celula.alignment = Alignment(vertical="top")
+
+        if "Cotacao_USD_BRL" in df.columns:
+            coluna_cotacao = df.columns.get_loc("Cotacao_USD_BRL") + 1
+            for linha in range(4, planilha.max_row + 1):
+                planilha.cell(linha, coluna_cotacao).number_format = '"R$ "0.0000'
+
+def enviar_relatorio_email(df, caminho_csv=None, anexos_extras=None, caminho_xlsx=None):
     if not EMAIL_SENHA or EMAIL_SENHA == "sua_senha_ou_senha_de_app_aqui":
         print("\n[!] AVISO: Senha de e-mail não configurada no arquivo .env.")
         print(f"    Para ativar o envio para {EMAIL_DESTINO}, defina EMAIL_SENHA no arquivo .env")
@@ -146,6 +219,10 @@ def enviar_relatorio_email(df, caminho_csv=None, anexos_extras=None):
     # Gera tabela HTML estilizada
     tabela_html = df.to_html(index=False, border=0, classes="tabela-dados")
     
+    descricao_anexos = (
+        "A planilha diária (.xlsx), o histórico (.csv) e os relatórios semanais foram anexados."
+        if caminho_csv else "A planilha diária (.xlsx) foi anexada."
+    )
     corpo_html = f"""
     <html>
     <head>
@@ -174,7 +251,7 @@ def enviar_relatorio_email(df, caminho_csv=None, anexos_extras=None):
             
             <p class="footer">
                 Fonte: Compras Paraguai (Ciudad del Este)<br>
-                A planilha histórica (.csv) e relatórios foram anexados a este e-mail.
+                {descricao_anexos}
             </p>
         </div>
     </body>
@@ -185,6 +262,8 @@ def enviar_relatorio_email(df, caminho_csv=None, anexos_extras=None):
     
     # Anexar arquivos
     lista_anexos = []
+    if caminho_xlsx and os.path.exists(caminho_xlsx):
+        lista_anexos.append(caminho_xlsx)
     if caminho_csv and os.path.exists(caminho_csv):
         lista_anexos.append(caminho_csv)
     if anexos_extras:
@@ -195,7 +274,9 @@ def enviar_relatorio_email(df, caminho_csv=None, anexos_extras=None):
     for arquivo in lista_anexos:
         try:
             with open(arquivo, "rb") as anexo:
-                part = MIMEBase("application", "octet-stream")
+                tipo_mime = mimetypes.guess_type(arquivo)[0] or "application/octet-stream"
+                tipo_principal, subtipo = tipo_mime.split("/", 1)
+                part = MIMEBase(tipo_principal, subtipo)
                 part.set_payload(anexo.read())
             encoders.encode_base64(part)
             nome_arquivo = os.path.basename(arquivo)
@@ -222,7 +303,71 @@ def enviar_relatorio_email(df, caminho_csv=None, anexos_extras=None):
         print(f"[X] Falha no envio do e-mail: {e}")
         return False
 
+def enviar_email_erro(detalhes):
+    if not EMAIL_REMETENTE or not EMAIL_SENHA:
+        print("[!] Alerta por e-mail não enviado: remetente ou senha SMTP não configurados.")
+        return False
+
+    msg = MIMEMultipart()
+    msg["From"] = EMAIL_REMETENTE
+    msg["To"] = EMAIL_DESTINO
+    msg["Subject"] = f"[ERRO] Pesquisa iPhone Paraguai - {datetime.now().strftime('%d/%m/%Y %H:%M')}"
+    msg.attach(MIMEText(
+        f"A rotina de pesquisa de preços falhou em {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}.\n\n"
+        f"Detalhes do erro:\n{detalhes}\n\nO trecho recente de execucao_log.txt está anexado quando disponível.",
+        "plain",
+        "utf-8",
+    ))
+
+    try:
+        sys.stdout.flush()
+        sys.stderr.flush()
+    except (AttributeError, OSError, ValueError):
+        pass
+
+    caminho_log = os.path.join(os.path.dirname(__file__), "execucao_log.txt")
+    try:
+        with open(caminho_log, "rb") as arquivo_log:
+            log_recente = arquivo_log.read()[-50000:].decode("utf-8", errors="replace")
+        if log_recente:
+            anexo_log = MIMEText(log_recente, "plain", "utf-8")
+            anexo_log.add_header("Content-Disposition", "attachment", filename="execucao_log.txt")
+            msg.attach(anexo_log)
+    except OSError as e:
+        print(f"[!] Não foi possível anexar execucao_log.txt: {e}")
+
+    try:
+        if SMTP_PORT == 465:
+            with smtplib.SMTP_SSL(SMTP_SERVER, SMTP_PORT, timeout=20) as servidor:
+                servidor.login(EMAIL_REMETENTE, EMAIL_SENHA)
+                servidor.send_message(msg)
+        else:
+            with smtplib.SMTP(SMTP_SERVER, SMTP_PORT, timeout=20) as servidor:
+                servidor.ehlo()
+                servidor.starttls()
+                servidor.ehlo()
+                servidor.login(EMAIL_REMETENTE, EMAIL_SENHA)
+                servidor.send_message(msg)
+        print(f"[+] Alerta de erro enviado para {EMAIL_DESTINO}.")
+        return True
+    except Exception as e:
+        print(f"[X] Não foi possível enviar o alerta de erro: {e}")
+        return False
+
+def _reportar_excecao(tipo, valor, tb):
+    detalhes = "".join(traceback.format_exception(tipo, valor, tb))
+    enviar_email_erro(detalhes)
+    sys.__excepthook__(tipo, valor, tb)
+
+sys.excepthook = _reportar_excecao
+
 def obter_caminho_desktop():
+    caminho_configurado = os.getenv("IPHONE_OUTPUT_DIR", "").strip()
+    if caminho_configurado:
+        caminho = os.path.abspath(caminho_configurado)
+        os.makedirs(caminho, exist_ok=True)
+        return caminho
+
     desktop = os.path.expanduser(r"~\OneDrive\Área de Trabalho")
     if not os.path.exists(desktop):
         desktop = os.path.expanduser(r"~\Desktop")
@@ -267,12 +412,22 @@ if __name__ == "__main__":
     
     if dados:
         df_hoje = pd.DataFrame(dados)
+        cotacao_dolar = obter_cotacao_dolar()
+        df_hoje["Cotacao_USD_BRL"] = cotacao_dolar["valor"] if cotacao_dolar else None
+        df_hoje["Data_Cotacao_USD"] = cotacao_dolar["data"] if cotacao_dolar else None
+        if not cotacao_dolar:
+            enviar_email_erro("A pesquisa foi coletada, mas a cotação PTAX do dólar não foi obtida. O XLSX indicará a indisponibilidade.")
         print(f"\n[+] SUCESSO! Encontrados {len(df_hoje)} modelos na coleta de hoje.\n")
         
         # 1. Salva o histórico acumulado no mesmo local (Desktop e cópia local)
         desktop = obter_caminho_desktop()
         caminho_csv_desktop = os.path.join(desktop, "historico_iphone_paraguai.csv")
         df_historico = salvar_historico_cumulativo(df_hoje, caminho_csv_desktop)
+        caminho_xlsx_diario = os.path.join(
+            desktop,
+            f"relatorio_iphone_paraguai_{datetime.now().strftime('%Y-%m-%d')}.xlsx",
+        )
+        salvar_relatorio_excel(df_hoje, caminho_xlsx_diario, cotacao_dolar)
 
         # Cópia local no repositório
         caminho_csv_local = os.path.join(os.path.dirname(__file__), "historico_iphone_paraguai.csv")
@@ -283,6 +438,7 @@ if __name__ == "__main__":
 
         # 2. Se for Sexta-feira, executa o Infográfico Semanal
         anexos_extras = []
+        falha_infografico = False
         if eh_sexta_feira:
             print("\n" + "#" * 60)
             print("📈 HOJE É SEXTA-FEIRA: GERANDO INFOGRÁFICO EXECUTIVO DE PREÇOS")
@@ -308,10 +464,24 @@ if __name__ == "__main__":
                 print(f"[+] Infográfico Semanal disponível em:\n    -> {caminho_html_desktop}\n    -> {caminho_html_historico}")
             except Exception as e:
                 print(f"[X] Erro ao gerar infográfico: {e}")
+                falha_infografico = True
+                enviar_email_erro(f"Falha ao gerar o infográfico semanal: {e}\n\n{traceback.format_exc()}")
 
         # 3. Dispara o envio por e-mail com os anexos (CSV + Infográfico se sexta)
-        enviar_relatorio_email(df_hoje, caminho_csv_desktop, anexos_extras)
+        if not enviar_relatorio_email(
+            df_hoje,
+            caminho_csv_desktop if eh_sexta_feira else None,
+            anexos_extras,
+            caminho_xlsx_diario,
+        ):
+            enviar_email_erro("A coleta foi concluída, mas o relatório diário não pôde ser enviado. Consulte execucao_log.txt para ver a causa registrada.")
+            sys.exit(1)
+        if falha_infografico:
+            print("[X] Relatório enviado, mas a geração do infográfico falhou.")
+            sys.exit(1)
         print("\n[✔] Rotina concluída com sucesso!")
     else:
         print("[!] Nenhum resultado foi extraído.")
+        enviar_email_erro("A coleta terminou sem encontrar resultados. Verifique a disponibilidade do site e o log execucao_log.txt.")
+        sys.exit(1)
 

@@ -1,16 +1,14 @@
-name: Monitoramento de Precos iPhone Paraguai
+﻿name: Monitoramento de Precos iPhone Paraguai
 
 on:
   schedule:
-    # Executa todos os dias às 11:15 UTC (08:15 Horário de Brasília)
-    # Minuto quebrado (:15) evita as filas de alta demanda dos horários cheios (:00) no GitHub Actions
-    # Sexta-feira: gera pesquisa diária + Infográfico Executivo Semanal
-    # Demais dias: gera pesquisa diária e acumula histórico
+    # Executa todos os dias as 11:15 UTC (08:15 Horario de Brasilia)
+    # Minuto quebrado (:15) evita as filas de alta demanda dos horarios cheios (:00)
     - cron: '15 11 * * *'
   workflow_dispatch:
     inputs:
       forcar_sexta:
-        description: 'Forçar geração do infográfico semanal'
+        description: 'Forcar geracao do infografico semanal'
         required: false
         default: false
         type: boolean
@@ -21,9 +19,10 @@ permissions:
 jobs:
   executar-monitoramento:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
 
     steps:
-      - name: Checkout do Repositório
+      - name: Checkout do Repositorio
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -34,44 +33,75 @@ jobs:
           python-version: '3.11'
           cache: 'pip'
 
-      - name: Instalar Dependências
+      - name: Instalar Dependencias
         run: |
-          python -m pip install --upgrade pip
-          pip install cloudscraper beautifulsoup4 pandas python-dotenv
+          python -m pip install --upgrade pip --quiet
+          pip install -r requirements.txt --quiet
 
-      - name: Executar Monitoramento e Gerador de Infográfico
+      - name: Executar Monitoramento com Retry
+        id: execucao
         env:
           EMAIL_REMETENTE: ${{ secrets.EMAIL_REMETENTE }}
           EMAIL_SENHA: ${{ secrets.EMAIL_SENHA }}
           EMAIL_DESTINO: ${{ secrets.EMAIL_DESTINO }}
           SMTP_SERVER: ${{ secrets.SMTP_SERVER }}
           SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          IPHONE_OUTPUT_DIR: ${{ github.workspace }}/GAMMA
         run: |
-          if [ "${{ github.event.inputs.forcar_sexta }}" = "true" ]; then
-            python GAMMA/pesquisa_iphone_paraguai.py --forcar-sexta
-          else
-            python GAMMA/pesquisa_iphone_paraguai.py
-          fi
+          MAX_TENTATIVAS=3
+          FORCAR_SEXTA="${{ github.event.inputs.forcar_sexta }}"
 
-      - name: Upload dos Relatórios como Artefatos (CSV + Infográfico HTML)
+          for tentativa in $(seq 1 $MAX_TENTATIVAS); do
+            echo "========================================="
+            echo ">>> Tentativa $tentativa de $MAX_TENTATIVAS"
+            echo "========================================="
+
+            set +e
+            if [ "$FORCAR_SEXTA" = "true" ]; then
+              python GAMMA/pesquisa_iphone_paraguai.py --forcar-sexta 2>&1 | tee -a GAMMA/execucao_log.txt
+            else
+              python GAMMA/pesquisa_iphone_paraguai.py 2>&1 | tee -a GAMMA/execucao_log.txt
+            fi
+            EXIT_CODE=${PIPESTATUS[0]}
+            set -e
+
+            if [ $EXIT_CODE -eq 0 ]; then
+              echo ">>> Execucao concluida com sucesso na tentativa $tentativa."
+              break
+            fi
+
+            if [ $tentativa -lt $MAX_TENTATIVAS ]; then
+              echo ">>> Tentativa $tentativa falhou (codigo $EXIT_CODE). Aguardando 90s..."
+              sleep 90
+            else
+              echo ">>> Todas as $MAX_TENTATIVAS tentativas falharam."
+              exit 1
+            fi
+          done
+
+      - name: Upload dos Relatorios como Artefatos
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: relatorio-precos-paraguai
           path: |
             GAMMA/historico_iphone_paraguai.csv
+            GAMMA/relatorio_iphone_paraguai_*.xlsx
             GAMMA/infografico_precos_paraguai.html
-            historico_iphone_paraguai.csv
-            infografico_precos_paraguai.html
+            GAMMA/infografico_precos_paraguai_*.html
+            GAMMA/execucao_log.txt
           if-no-files-found: ignore
 
-      - name: Commit e Push das Atualizações de Histórico
+      - name: Commit e Push do Historico
+        if: success()
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add GAMMA/historico_iphone_paraguai.csv GAMMA/infografico_precos_paraguai.html historico_iphone_paraguai.csv infografico_precos_paraguai.html || true
+          git add -f GAMMA/historico_iphone_paraguai.csv || true
+          git add GAMMA/infografico_precos_paraguai.html || true
           if git diff --staged --quiet; then
-            echo "Nenhuma alteração nos dados para commitar."
+            echo "Nenhuma alteracao nos dados para commitar."
           else
-            git commit -m "chore(data): atualização automática do histórico e infográfico [skip ci]"
+            git commit -m "chore(data): atualizacao automatica do historico e infografico [skip ci]"
             git push origin main
           fi
