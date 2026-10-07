@@ -12,6 +12,7 @@ from openpyxl.utils import get_column_letter
 import mimetypes
 import pandas as pd
 from openpyxl.styles import Alignment, Font, PatternFill
+from bs4 import BeautifulSoup
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
