@@ -3,8 +3,9 @@
 on:
   schedule:
     # Executa todos os dias as 11:15 UTC (08:15 Horario de Brasilia)
-    # Minuto quebrado (:15) evita as filas de alta demanda dos horarios cheios (:00)
     - cron: '15 11 * * *'
+    # Segunda tentativa diaria, caso a primeira execucao agendada seja perdida ou atrasada.
+    - cron: '45 11 * * *'
   workflow_dispatch:
     inputs:
       forcar_sexta:
@@ -20,6 +21,10 @@ on:
 
 permissions:
   contents: write
+
+concurrency:
+  group: monitoramento-iphone-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   executar-monitoramento:
@@ -52,10 +57,12 @@ jobs:
           SMTP_SERVER: ${{ secrets.SMTP_SERVER }}
           SMTP_PORT: ${{ secrets.SMTP_PORT }}
           IPHONE_OUTPUT_DIR: ${{ github.workspace }}/GAMMA
+          EVENT_NAME: ${{ github.event_name }}
         run: |
           MAX_TENTATIVAS=3
           FORCAR_SEXTA="${{ github.event.inputs.forcar_sexta }}"
           TESTE_EMAIL="${{ github.event.inputs.teste_email }}"
+          RUN_DATE="$(TZ=America/Sao_Paulo date +%F)"
 
           if [ "$TESTE_EMAIL" = "true" ]; then
             set +e
@@ -63,6 +70,11 @@ jobs:
             EXIT_CODE=${PIPESTATUS[0]}
             set -e
             exit "$EXIT_CODE"
+          fi
+
+          if [ "$EVENT_NAME" = "schedule" ] && [ -f GAMMA/.last_successful_run ] && [ "$(cat GAMMA/.last_successful_run)" = "$RUN_DATE" ]; then
+            echo "Ja existe uma execucao diaria concluida em $RUN_DATE; ignorando esta tentativa agendada para evitar duplicidade."
+            exit 0
           fi
 
           for tentativa in $(seq 1 $MAX_TENTATIVAS); do
@@ -93,6 +105,8 @@ jobs:
             fi
           done
 
+          printf '%s\n' "$RUN_DATE" > GAMMA/.last_successful_run
+
       - name: Upload dos Relatorios como Artefatos
         if: always()
         uses: actions/upload-artifact@v4
@@ -112,6 +126,7 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add -f GAMMA/historico_iphone_paraguai.csv || true
+          git add GAMMA/.last_successful_run || true
           git add GAMMA/infografico_precos_paraguai.html || true
           if git diff --staged --quiet; then
             echo "Nenhuma alteracao nos dados para commitar."

@@ -1,0 +1,210 @@
+﻿name: Watchdog - Alerta de Falha no Monitoramento
+
+on:
+  # Dispara IMEDIATAMENTE quando o workflow principal termina (sucesso, falha ou cancelamento)
+  workflow_run:
+    workflows: ["Monitoramento de Precos iPhone Paraguai"]
+    types: [completed]
+
+  # Verificacao proativa diaria: roda 2h depois do horario esperado (13:30 UTC = 10:30 BRT)
+  # Detecta casos em que o workflow nem chegou a ser enfileirado
+  schedule:
+    - cron: '30 13 * * *'
+
+permissions:
+  actions: read
+  contents: read
+
+jobs:
+  verificar-e-alertar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Executar Watchdog
+        env:
+          EMAIL_REMETENTE: ${{ secrets.EMAIL_REMETENTE }}
+          EMAIL_SENHA: ${{ secrets.EMAIL_SENHA }}
+          EMAIL_DESTINO: ${{ secrets.EMAIL_DESTINO }}
+          SMTP_SERVER: ${{ secrets.SMTP_SERVER }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TRIGGER_EVENT: ${{ github.event_name }}
+          WR_CONCLUSION: ${{ github.event.workflow_run.conclusion }}
+          WR_HTML_URL: ${{ github.event.workflow_run.html_url }}
+          WR_NAME: ${{ github.event.workflow_run.name }}
+          WR_CREATED_AT: ${{ github.event.workflow_run.created_at }}
+        run: |
+          cat << 'PYEOF' > /tmp/watchdog.py
+          import os, smtplib, json, urllib.request, sys
+          from datetime import datetime, timezone, timedelta
+          from email.header import Header
+          from email.mime.text import MIMEText
+          from email.mime.multipart import MIMEMultipart
+
+          EMAIL_REMETENTE = os.getenv("EMAIL_REMETENTE", "").strip()
+          EMAIL_SENHA     = os.getenv("EMAIL_SENHA", "").strip()
+          EMAIL_DESTINO   = os.getenv("EMAIL_DESTINO", "carragal@hotmail.com").strip()
+          SMTP_SERVER_ENV = os.getenv("SMTP_SERVER", "").strip()
+          SMTP_PORT_ENV   = os.getenv("SMTP_PORT", "").strip()
+          GH_TOKEN        = os.getenv("GH_TOKEN", "")
+          TRIGGER_EVENT   = os.getenv("TRIGGER_EVENT", "schedule")
+          WR_CONCLUSION   = os.getenv("WR_CONCLUSION", "")
+          WR_HTML_URL     = os.getenv("WR_HTML_URL", "https://github.com/JuanCarragal/PROJETOS/actions")
+          WR_NAME         = os.getenv("WR_NAME", "Monitoramento de Precos iPhone Paraguai")
+          WR_CREATED_AT   = os.getenv("WR_CREATED_AT", "")
+
+          smtp_server = SMTP_SERVER_ENV or ("smtp.gmail.com" if "gmail.com" in EMAIL_REMETENTE.lower() else "smtp-mail.outlook.com")
+          smtp_port   = int(SMTP_PORT_ENV) if SMTP_PORT_ENV else (465 if "gmail.com" in EMAIL_REMETENTE.lower() else 587)
+
+          def api_github(path):
+              url = f"https://api.github.com/repos/JuanCarragal/PROJETOS/{path}"
+              req = urllib.request.Request(url)
+              req.add_header("Authorization", f"Bearer {GH_TOKEN}")
+              req.add_header("Accept", "application/vnd.github.v3+json")
+              req.add_header("User-Agent", "watchdog-py/1.0")
+              with urllib.request.urlopen(req, timeout=15) as r:
+                  return json.loads(r.read())
+
+          def enviar_alerta(assunto, corpo_html):
+              if not EMAIL_SENHA:
+                  print(f"[!] EMAIL_SENHA nao configurado. Alerta suprimido: {assunto}")
+                  return
+              msg = MIMEMultipart()
+              msg["From"]    = EMAIL_REMETENTE
+              msg["To"]      = EMAIL_DESTINO
+              msg["Subject"] = Header(assunto, "utf-8")
+              msg.attach(MIMEText(corpo_html, "html", "utf-8"))
+              try:
+                  if smtp_port == 465:
+                      s = smtplib.SMTP_SSL(smtp_server, smtp_port, timeout=20)
+                  else:
+                      s = smtplib.SMTP(smtp_server, smtp_port, timeout=20)
+                      s.ehlo(); s.starttls(); s.ehlo()
+                  s.login(EMAIL_REMETENTE, EMAIL_SENHA)
+                  s.sendmail(EMAIL_REMETENTE, EMAIL_DESTINO, msg.as_string())
+                  s.quit()
+                  print(f"[+] Alerta enviado com sucesso para {EMAIL_DESTINO}: {assunto}")
+              except Exception as e:
+                  print(f"[X] Erro ao enviar alerta: {e}")
+                  sys.exit(1)
+
+          def html_alerta(titulo, motivo, detalhes, link_actions):
+              hora_br = datetime.now(timezone(timedelta(hours=-3))).strftime("%d/%m/%Y às %H:%M")
+              return f"""<html><head><style>
+                body{{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f4f7f9;margin:0;padding:20px}}
+                .card{{background:#fff;max-width:600px;margin:0 auto;padding:28px;border-radius:12px;box-shadow:0 4px 16px rgba(0,0,0,.1)}}
+                .hdr{{background:linear-gradient(135deg,#dc2626,#b91c1c);color:#fff;padding:16px 20px;border-radius:8px;margin-bottom:20px}}
+                .hdr h2{{margin:0;font-size:18px}}
+                .badge{{display:inline-block;padding:4px 10px;border-radius:6px;background:#fee2e2;color:#dc2626;font-weight:700;font-size:12px}}
+                .details{{background:#f8fafc;border-left:3px solid #dc2626;padding:14px 16px;border-radius:0 8px 8px 0;margin:16px 0;font-size:13px;color:#334155;line-height:1.7}}
+                .btn{{display:inline-block;margin-top:16px;padding:11px 22px;background:#0284c7;color:#fff;text-decoration:none;border-radius:8px;font-weight:700;font-size:13px}}
+                .footer{{margin-top:24px;font-size:11px;color:#94a3b8;text-align:center}}
+              </style></head><body><div class="card">
+                <div class="hdr"><h2>🚨 {titulo}</h2></div>
+                <p><span class="badge">ALERTA AUTOMÁTICO — WATCHDOG</span></p>
+                <p style="color:#475569;font-size:14px"><strong>Detectado em:</strong> {hora_br} (horário de Brasília)</p>
+                <div class="details"><strong>Motivo:</strong> {motivo}<br><br>{detalhes}</div>
+                <a class="btn" href="{link_actions}">Ver no GitHub Actions →</a>
+                <p class="footer">Watchdog automático · Monitoramento iPhone Paraguai · JuanCarragal/PROJETOS</p>
+              </div></body></html>"""
+
+          now_utc = datetime.now(timezone.utc)
+          should_alert = False
+          titulo = motivo = detalhes = ""
+          link_actions = WR_HTML_URL
+
+          # ─── CAMINHO 1: Disparado pelo workflow_run ────────────────────────────────
+          if TRIGGER_EVENT == "workflow_run":
+              print(f"[*] Trigger: workflow_run | Conclusao: {WR_CONCLUSION}")
+
+              if WR_CONCLUSION == "success":
+                  print("[OK] Workflow concluido com sucesso. Nenhum alerta necessario.")
+
+              elif WR_CONCLUSION in ("failure", "cancelled", "timed_out", "startup_failure"):
+                  should_alert = True
+                  msg_map = {
+                      "failure":         "O workflow falhou durante a execucao (mesmo apos 3 tentativas automaticas)",
+                      "cancelled":       "O workflow foi CANCELADO — provavelmente por timeout da fila do GitHub Actions ou cancelamento manual",
+                      "timed_out":       "O workflow excedeu o limite de 20 minutos e foi encerrado automaticamente",
+                      "startup_failure": "O workflow nao conseguiu iniciar (startup_failure) — verifique secrets e permissoes",
+                  }
+                  titulo  = f"Falha no Monitoramento iPhone Paraguai ({WR_CONCLUSION.upper()})"
+                  motivo  = msg_map.get(WR_CONCLUSION, WR_CONCLUSION)
+                  hora_run = WR_CREATED_AT[:16].replace("T", " ") + " UTC" if WR_CREATED_AT else "desconhecida"
+                  detalhes = (f"<strong>Workflow:</strong> {WR_NAME}<br>"
+                              f"<strong>Hora do run:</strong> {hora_run}<br>"
+                              f"<strong>Conclusao:</strong> {WR_CONCLUSION}<br>"
+                              f"<strong>Acao recomendada:</strong> Acesse o link abaixo, veja os logs e dispare manualmente se necessario.")
+              else:
+                  print(f"[?] Conclusao desconhecida: {WR_CONCLUSION}. Nenhum alerta.")
+
+          # ─── CAMINHO 2: Verificacao proativa diaria (schedule) ────────────────────
+          else:
+              print("[*] Trigger: schedule — verificacao proativa diaria...")
+              try:
+                  data = api_github("actions/workflows/monitoramento_iphone.yml/runs?per_page=10")
+                  runs = data.get("workflow_runs", [])
+                  brasilia = timezone(timedelta(hours=-3))
+                  hoje_brasilia = now_utc.astimezone(brasilia).date()
+                  runs_de_hoje = [
+                      run for run in runs
+                      if datetime.fromisoformat(run["created_at"].replace("Z", "+00:00")).astimezone(brasilia).date() == hoje_brasilia
+                  ]
+                  runs_agendados = [run for run in runs_de_hoje if run.get("event") == "schedule"]
+                  runs_agendados_ok = [run for run in runs_agendados if run.get("conclusion") == "success"]
+
+                  if not runs_agendados:
+                      should_alert = True
+                      ultimos_agendados = [run for run in runs if run.get("event") == "schedule"]
+                      ultimo_str = ultimos_agendados[0]["created_at"][:16].replace("T", " ") + " UTC" if ultimos_agendados else "nenhum registrado"
+                      houve_manual_ok = any(run.get("conclusion") == "success" for run in runs_de_hoje)
+                      titulo = "Agendamento do monitoramento nao executou hoje"
+                      motivo = (
+                          "Nenhum run com evento schedule foi detectado hoje, mesmo que uma execucao manual "
+                          "tenha sido concluida."
+                      )
+                      detalhes = (
+                          f"<strong>Ultimo run agendado:</strong> {ultimo_str}<br>"
+                          f"<strong>Run manual bem-sucedido hoje:</strong> {'sim' if houve_manual_ok else 'nao'}<br>"
+                          "<strong>Acao necessaria:</strong> Verifique o cron e a pagina do GitHub Actions."
+                      )
+                      link_actions = "https://github.com/JuanCarragal/PROJETOS/actions"
+
+                  elif not runs_agendados_ok:
+                      ultimo = runs_agendados[0]
+                      should_alert = True
+                      conclusao = ultimo.get("conclusion", "?")
+                      hora_run = ultimo["created_at"][:16].replace("T", " ") + " UTC"
+                      titulo = "Execucao agendada do monitoramento falhou hoje"
+                      motivo = f"O ultimo workflow com evento schedule terminou com status '{conclusao}'"
+                      detalhes = (
+                          f"<strong>Ultimo run:</strong> {hora_run}<br>"
+                          f"<strong>Status:</strong> {conclusao}<br>"
+                          f"<strong>Runs agendados hoje:</strong> {len(runs_agendados)}<br>"
+                          "<strong>Acao recomendada:</strong> Veja os logs e dispare manualmente."
+                      )
+                      link_actions = ultimo["html_url"]
+
+                  else:
+                      print(f"[OK] Workflow agendado concluiu com sucesso hoje ({len(runs_agendados_ok)} run(s)). Nenhum alerta.")
+
+              except Exception as e:
+                  should_alert = True
+                  titulo   = "Erro no Watchdog — impossivel verificar status do monitoramento"
+                  motivo   = f"O watchdog encontrou um erro ao consultar a API do GitHub: {e}"
+                  detalhes = ("Verifique as permissoes do GITHUB_TOKEN e se a API esta acessivel.<br>"
+                              "O monitoramento pode ou nao ter rodado hoje — verifique manualmente.")
+                  link_actions = "https://github.com/JuanCarragal/PROJETOS/actions"
+                  print(f"[X] Erro watchdog: {e}")
+
+          if should_alert:
+              corpo = html_alerta(titulo, motivo, detalhes, link_actions)
+              enviar_alerta(f"[WATCHDOG] ALERTA: {titulo}", corpo)
+          PYEOF
+          python /tmp/watchdog.py
