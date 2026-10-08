@@ -2,10 +2,12 @@
 
 on:
   schedule:
-    # Executa todos os dias as 11:15 UTC (08:15 Horario de Brasilia)
-    - cron: '15 11 * * *'
+    # Executa na madrugada para reduzir a fila do GitHub Actions.
+    - cron: '15 2 * * *'
+      timezone: 'America/Sao_Paulo'
     # Segunda tentativa diaria, caso a primeira execucao agendada seja perdida ou atrasada.
-    - cron: '45 11 * * *'
+    - cron: '45 2 * * *'
+      timezone: 'America/Sao_Paulo'
   workflow_dispatch:
     inputs:
       forcar_sexta:
