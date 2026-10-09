@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reforma Tributária - Porto Analytics</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js (Gráficos) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- SheetJS (Leitor de Excel) -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <!-- Fonte Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+
+        /* BARRA DE ROLAGEM LATERAL CUSTOMIZADA DA PÁGINA */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #0284c7; /* Azul Porto */
+            border-radius: 4px;
+        }
+
+        /* Oculta a barra de rolagem do menu */
+        .sem-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .sem-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen">
+
+    <!-- 1. CABEÇALHO / NAVEGAÇÃO SUPERIOR -->
+    <header class="border-b border-slate-200 sticky top-0 bg-white/95 backdrop-blur-sm z-50">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between gap-4">
+            
+            <div class="flex items-center gap-2 shrink-0">
+                <span class="text-xl font-medium tracking-tight text-slate-700">Reforma Tributária</span>
+            </div>
+
+            <!-- MENU SUPERIOR COM SETAS AZUIS -->
+            <div class="relative flex items-center max-w-xl w-full">
+                
+                <button onclick="rolarMenu(-200)" 
+                        type="button"
+                        class="bg-sky-500 hover:bg-sky-600 active:scale-95 text-white p-2 rounded-full shadow-md z-30 shrink-0 transition-all cursor-pointer flex items-center justify-center mr-2" 
+                        title="Rolar para esquerda">
+                    <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                    </svg>
+                </button>
+
+                <nav id="menu-scroll" class="flex items-center gap-6 text-sm font-medium text-slate-700 overflow-x-auto sem-scrollbar scroll-smooth whitespace-nowrap py-2 px-1 w-full">
+                    <a href="#" class="font-bold text-slate-900 hover:text-sky-600 transition-colors">Comece por aqui</a>
+                    <a href="#" class="hover:text-sky-600 transition-colors">Comunicações</a>
+                    <a href="#" class="hover:text-sky-600 transition-colors">Times</a>
+                    <a href="#" class="hover:text-sky-600 transition-colors">Materiais de Apoio</a>
+                    <a href="#" class="hover:text-sky-600 transition-colors">Treinamentos</a>
+                    <a href="#" class="hover:text-sky-600 transition-colors">Indicadores de Evolução</a>
+                    <a href="#" class="hover:text-sky-600 transition-colors">Relatórios e Análises</a>
+                    <a href="#" class="hover:text-sky-600 transition-colors">Projetos Estratégicos</a>
+                    <a href="#" class="hover:text-sky-600 transition-colors">Mais Opções</a>
+                </nav>
+
+                <button onclick="rolarMenu(200)" 
+                        type="button"
+                        class="bg-sky-500 hover:bg-sky-600 active:scale-95 text-white p-2 rounded-full shadow-md z-30 shrink-0 transition-all cursor-pointer flex items-center justify-center ml-2" 
+                        title="Rolar para direita">
+                    <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                    </svg>
+                </button>
+
+            </div>
+
+            <button class="text-slate-600 hover:text-slate-900 transition-colors shrink-0">
+                <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/>
+                </svg>
+            </button>
+
+        </div>
+    </header>
+
+    <!-- CONTAINER PRINCIPAL DA PÁGINA -->
+    <main class="max-w-7xl mx-auto px-6 py-6 space-y-8">
+
+        <!-- SUBTÍTULO / LOGO PORTO REFORMA TRIBUTÁRIA -->
+        <div class="text-xs font-bold uppercase tracking-wider text-slate-500">
+            <div class="flex items-center gap-1 text-slate-900 font-extrabold text-sm mb-1">
+                <span class="text-sky-500">p</span>Porto
+            </div>
+            <div class="text-lg font-bold tracking-tight text-slate-900 lowercase first-letter:capitalize">
+                Reforma<br>Tributária
+            </div>
+        </div>
+
+        <!-- 2. HERO BANNER PRINCIPAL COM SETAS DE NAVEGAÇÃO -->
+        <section class="relative group">
+            <div class="relative w-full h-[320px] sm:h-[380px] rounded-2xl overflow-hidden shadow-sm flex items-center">
+                <!-- Imagem do Banner -->
+                <img id="banner-img" 
+                     src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=1600&auto=format&fit=crop" 
+                     alt="Programa Reforma Tributária" 
+                     class="absolute inset-0 w-full h-full object-cover transition-all duration-500">
+                
+                <!-- Overlay Gradiente para Contraste do Texto -->
+                <div class="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-transparent"></div>
+
+                <!-- Conteúdo do Banner (Texto) -->
+                <div class="relative z-10 max-w-xl px-12 sm:px-16 text-white space-y-2">
+                    <span id="banner-subtitulo" class="text-xs sm:text-sm font-semibold tracking-wide text-slate-200 block">
+                        Ponto central de informações
+                    </span>
+                    <h1 id="banner-titulo" class="text-2xl sm:text-4xl font-extrabold leading-tight">
+                        Programa Reforma Tributária
+                    </h1>
+                    <p id="banner-descricao" class="text-xs sm:text-sm text-slate-200 font-normal leading-relaxed pt-1">
+                        Acompanhe marcos, entregas e treinamentos, além de acessar materiais exclusivos e indicadores de evolução.
+                    </p>
+                </div>
+
+                <!-- SETA ESQUERDA DO BANNER -->
+                <button onclick="mudarSlide(-1)" 
+                        type="button" 
+                        class="absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-black/40 hover:bg-black/70 text-white p-3 rounded-full backdrop-blur-sm transition-all cursor-pointer border border-white/20 hover:scale-105"
+                        title="Banner anterior">
+                    <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                    </svg>
+                </button>
+
+                <!-- SETA DIREITA DO BANNER -->
+                <button onclick="mudarSlide(1)" 
+                        type="button" 
+                        class="absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-black/40 hover:bg-black/70 text-white p-3 rounded-full backdrop-blur-sm transition-all cursor-pointer border border-white/20 hover:scale-105"
+                        title="Próximo banner">
+                    <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- CARROSSEL DOTS (PONTOS DE INDICADORES NA PARTE INFERIOR) -->
+            <div class="flex items-center justify-center gap-2 mt-4">
+                <span id="dot-0" onclick="irParaSlide(0)" class="h-2.5 w-2.5 rounded-full bg-sky-500 cursor-pointer transition-all"></span>
+                <span id="dot-1" onclick="irParaSlide(1)" class="h-2.5 w-2.5 rounded-full bg-slate-300 hover:bg-slate-400 cursor-pointer transition-all"></span>
+            </div>
+        </section>
+
+        <!-- 3. PAINEL DE LEITURA EXCEL -->
+        <section class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="h-10 w-10 bg-sky-50 text-sky-600 rounded-xl flex items-center justify-center shrink-0">
+                    <svg class="w-6 h-6 fill-current" viewBox="0 0 20 20">
+                        <path d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z"/>
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="text-sm font-bold text-slate-900">Carregar Planilha de Dados</h3>
+                    <p class="text-xs text-slate-500">Selecione um ficheiro Excel (.xlsx) para alimentar os gráficos</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3 w-full sm:w-auto">
+                <input type="file" id="input-excel" accept=".xlsx, .xls, .csv" class="hidden" onchange="atualizarNomeFicheiro(event)">
+                
+                <span id="nome-ficheiro" class="text-xs font-semibold text-slate-600 truncate max-w-[150px]">
+                    Nenhum ficheiro...
+                </span>
+
+                <button onclick="document.getElementById('input-excel').click()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold px-3 py-2 rounded-lg transition-all shrink-0">
+                    Escolher
+                </button>
+
+                <button id="btn-upload" onclick="processarFicheiroExcel()" class="bg-sky-500 hover:bg-sky-600 text-white text-xs font-semibold px-4 py-2 rounded-lg transition-all shadow-sm flex items-center justify-center shrink-0">
+                    Processar
+                </button>
+            </div>
+        </section>
+
+        <!-- 4. PAINEL DE GRÁFICOS E INDICADORES -->
+        <section class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            <div class="lg:col-span-7 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="text-base font-extrabold text-slate-900">Nosso site</h2>
+                        <h3 class="text-xs font-bold text-sky-500">Indicadores de Evolução</h3>
+                    </div>
+                    <span id="badge-status" class="text-[11px] font-semibold bg-slate-100 text-slate-600 px-2.5 py-1 rounded-lg">
+                        Aguardando Dados
+                    </span>
+                </div>
+
+                <p class="text-xs text-slate-600 leading-relaxed">
+                    Ambiente criado para <strong class="text-slate-900">fortalecer o entendimento</strong>, apoiar as <strong class="text-slate-900">equipes</strong> e garantir o acompanhamento em tempo real.
+                </p>
+
+                <div class="relative h-64 w-full pt-2">
+                    <canvas id="meuGraficoLinhas"></canvas>
+                </div>
+            </div>
+
+            <div class="lg:col-span-5 space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Total Processado</span>
+                        <span id="kpi-total" class="text-xl font-bold text-slate-900 mt-1 block">R$ 0</span>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Linhas Lidas</span>
+                        <span id="kpi-linhas" class="text-xl font-bold text-slate-900 mt-1 block">0</span>
+                    </div>
+                </div>
+
+                <div class="rounded-2xl overflow-hidden shadow-sm border border-slate-200">
+                    <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=800&auto=format&fit=crop" 
+                         alt="Equipa a trabalhar" 
+                         class="w-full h-48 object-cover">
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- 5. LÓGICA JAVASCRIPT: BANNER, MENU E EXCEL -->
+    <script>
+        // ROLAGEM DO MENU SUPERIOR
+        function rolarMenu(distancia) {
+            const menu = document.getElementById('menu-scroll');
+            if (menu) {
+                menu.scrollBy({ left: distancia, behavior: 'smooth' });
+            }
+        }
+
+        // LÓGICA DO CARROSSEL / BANNER HERO
+        const slides = [
+            {
+                subtitulo: "Ponto central de informações",
+                titulo: "Programa Reforma Tributária",
+                descricao: "Acompanhe marcos, entregas e treinamentos, além de acessar materiais exclusivos e indicadores de evolução.",
+                imagem: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=1600&auto=format&fit=crop"
+            },
+            {
+                subtitulo: "Acompanhamento em Tempo Real",
+                titulo: "Relatórios e Análises Estratégicas",
+                descricao: "Consulte painéis interativos e faça o upload de planilhas para visualizar os impactos tributários diretamente no gráfico.",
+                imagem: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1600&auto=format&fit=crop"
+            }
+        ];
+
+        let slideAtual = 0;
+
+        function atualizarBanner() {
+            const slide = slides[slideAtual];
+            document.getElementById('banner-img').src = slide.imagem;
+            document.getElementById('banner-subtitulo').innerText = slide.subtitulo;
+            document.getElementById('banner-titulo').innerText = slide.titulo;
+            document.getElementById('banner-descricao').innerText = slide.descricao;
+
+            // Atualiza os pontos (dots) de indicação
+            slides.forEach((_, idx) => {
+                const dot = document.getElementById(`dot-${idx}`);
+                if (dot) {
+                    if (idx === slideAtual) {
+                        dot.className = "h-2.5 w-2.5 rounded-full bg-sky-500 cursor-pointer transition-all";
+                    } else {
+                        dot.className = "h-2.5 w-2.5 rounded-full bg-slate-300 hover:bg-slate-400 cursor-pointer transition-all";
+                    }
+                }
+            });
+        }
+
+        function mudarSlide(direcao) {
+            slideAtual += direcao;
+            if (slideAtual < 0) {
+                slideAtual = slides.length - 1;
+            } else if (slideAtual >= slides.length) {
+                slideAtual = 0;
+            }
+            atualizarBanner();
+        }
+
+        function irParaSlide(index) {
+            slideAtual = index;
+            atualizarBanner();
+        }
+
+        // GRÁFICO CHART.JS
+        const ctx = document.getElementById('meuGraficoLinhas').getContext('2d');
+        const meuGrafico = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Item 1', 'Item 2', 'Item 3', 'Item 4', 'Item 5'],
+                datasets: [{
+                    label: 'Valores Processados',
+                    data: [0, 0, 0, 0, 0],
+                    borderColor: '#0284c7',
+                    backgroundColor: 'rgba(2, 132, 199, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4,
+                    pointBackgroundColor: '#0284c7',
+                    pointRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { grid: { display: false } },
+                    y: { border: { dash: [5, 5] }, grid: { color: '#f1f5f9' } }
+                }
+            }
+        });
+
+        function atualizarNomeFicheiro(event) {
+            const file = event.target.files[0];
+            if (file) {
+                document.getElementById('nome-ficheiro').innerText = file.name;
+            }
+        }
+
+        function processarFicheiroExcel() {
+            const input = document.getElementById('input-excel');
+            const file = input.files[0];
+
+            if (!file) {
+                alert('Por favor, selecione primeiro um ficheiro Excel (.xlsx ou .csv)!');
+                return;
+            }
+
+            const btn = document.getElementById('btn-upload');
+            
+            btn.disabled = true;
+            btn.className = "bg-sky-500 text-white text-xs font-semibold px-4 py-2 rounded-lg shadow-sm flex items-center justify-center gap-2 opacity-80 cursor-not-allowed shrink-0";
+            btn.innerHTML = `
+                <svg class="animate-spin h-4 w-4 text-white shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span>A processar...</span>
+            `;
+
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                const primeirAba = workbook.Sheets[workbook.SheetNames[0]];
+                const dadosJson = XLSX.utils.sheet_to_json(primeirAba, { header: 1 });
+
+                const novosRotulos = [];
+                const novosValores = [];
+                let somaTotal = 0;
+
+                for (let i = 1; i < dadosJson.length; i++) {
+                    const linha = dadosJson[i];
+                    if (linha.length >= 2) {
+                        novosRotulos.push(String(linha[0]));
+                        const valor = Number(linha[1]) || 0;
+                        novosValores.push(valor);
+                        somaTotal += valor;
+                    }
+                }
+
+                setTimeout(() => {
+                    meuGrafico.data.labels = novosRotulos;
+                    meuGrafico.data.datasets[0].data = novosValores;
+                    meuGrafico.update();
+
+                    document.getElementById('kpi-total').innerText = 'R$ ' + somaTotal.toLocaleString('pt-BR');
+                    document.getElementById('kpi-linhas').innerText = novosValores.length;
+                    document.getElementById('badge-status').innerText = 'Atualizado via Excel';
+
+                    btn.disabled = false;
+                    btn.className = "bg-sky-500 hover:bg-sky-600 text-white text-xs font-semibold px-4 py-2 rounded-lg transition-all shadow-sm flex items-center justify-center shrink-0";
+                    btn.innerHTML = `<span>Processar</span>`;
+                }, 1000);
+            };
+
+            reader.readAsArrayBuffer(file);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,47 @@
+# Evita que o Gemini CLI indexe a pasta do ambiente virtual do Python (muito grande!)
+.venv/
+**/site-packages/
+
+# Evita indexar as dependências do frontend (React/Node)
+node_modules/
+**/node_modules/
+
+# Arquivos compilados e temporários do Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Binários e arquivos grandes que não precisam ser lidos como texto
+*.zip
+*.xlsx
+*.exe
+*.png
+*.jpg
+*.jpeg
+*.svg
+*.gif
+*.ico
+*.pdf
+
+# Pastas de build de frontend
+dist/
+build/
+.svelte-kit/
+.next/
+out/
+
+# Controle de versão e IDEs
+.git/
+.svn/
+.hg/
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp

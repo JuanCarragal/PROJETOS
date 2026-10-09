@@ -1,0 +1,95 @@
+import requests
+from bs4 import BeautifulSoup
+import pandas as pd
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from datetime import datetime
+import os
+
+# Configurações de E-mail
+EMAIL_REMETENTE = "seu_email@gmail.com"
+SENHA_APP = "sua_senha_de_app_gmail"
+EMAIL_DESTINO = "seu_email@gmail.com"
+
+# Cabeçalhos para simular uma navegação real e evitar bloqueios
+HEADERS = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36"
+}
+
+def raspar_precos():
+    produtos = []
+    
+    # Substitua pelas URLs exatas de busca do iPhone 17 Pro Max na Cellshop ou Nissei
+    url_alvo = "https://www.exemplo-loja-paraguai.com/iphone-17-pro-max"
+    
+    try:
+        resposta = requests.get(url_alvo, headers=HEADERS, timeout=10)
+        sopa = BeautifulSoup(resposta.text, 'html.parser')
+        
+        # A cotação cambial do dia geralmente fica fixada no cabeçalho do site
+        cotacao_texto = sopa.find("span", class_="exchange-rate").text
+        cotacao_dolar = float(cotacao_texto.replace("R$", "").replace(",", ".").strip())
+        
+        # Identifica os cards de produto do iPhone 17 Pro Max
+        itens = sopa.find_all("div", class_="product-card")
+        
+        for item in itens:
+            nome = item.find("h2", class_="product-title").text.strip()
+            
+            if "iPhone 17 Pro Max" in nome:
+                preco_usd_texto = item.find("span", class_="price-usd").text
+                preco_usd = float(preco_usd_texto.replace("U$", "").replace(",", "").strip())
+                
+                disponibilidade = "Em Estoque" if item.find("div", class_="in-stock") else "Esgotado"
+                
+                produtos.append({
+                    "Data": datetime.now().strftime("%Y-%m-%d"),
+                    "Loja": "Loja Exemplo",
+                    "Modelo": nome,
+                    "Disponibilidade": disponibilidade,
+                    "Cotação (R$)": cotacao_dolar,
+                    "Preço (U$)": preco_usd,
+                    "Preço Convertido (R$)": round(preco_usd * cotacao_dolar, 2)
+                })
+                
+    except Exception as e:
+        print(f"Erro ao acessar a loja: {e}")
+        
+    return produtos
+
+def enviar_relatorio(df):
+    msg = MIMEMultipart()
+    msg["From"] = EMAIL_REMETENTE
+    msg["To"] = EMAIL_DESTINO
+    msg["Subject"] = f"Relatório Diário - iPhone 17 Pro Max Paraguai ({datetime.now().strftime('%d/%m/%Y')})"
+    
+    corpo_email = f"""
+    <h3>Atualização de Estoque e Preços - Ciudad del Este</h3>
+    <p>Cenário atualizado das cotações de hoje:</p>
+    {df.to_html(index=False, border=1, justify="center")}
+    """
+    
+    msg.attach(MIMEText(corpo_email, "html"))
+    
+    with smtplib.SMTP_SSL("smtp.gmail.com", 465) as servidor:
+        servidor.login(EMAIL_REMETENTE, SENHA_APP)
+        servidor.sendmail(EMAIL_REMETENTE, EMAIL_DESTINO, msg.as_string())
+
+if __name__ == "__main__":
+    dados = raspar_precos()
+    if dados:
+        df_novo = pd.DataFrame(dados)
+        
+        # Gerenciamento de arquivos no Desktop para construir a base do histórico
+        caminho_csv = os.path.expanduser(r"~\Desktop\historico_iphone_py.csv")
+        
+        if os.path.exists(caminho_csv):
+            df_historico = pd.read_csv(caminho_csv)
+            df_atualizado = pd.concat([df_historico, df_novo], ignore_index=True)
+        else:
+            df_atualizado = df_novo
+            
+        df_atualizado.to_csv(caminho_csv, index=False)
+        enviar_relatorio(df_novo)
+        print("Scraping concluído e relatório enviado para o e-mail.")
